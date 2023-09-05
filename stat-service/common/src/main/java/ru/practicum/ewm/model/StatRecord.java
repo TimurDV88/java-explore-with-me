@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stat.common.model;
+package ru.practicum.ewm.model;
 
 import lombok.Getter;
 import lombok.Setter;

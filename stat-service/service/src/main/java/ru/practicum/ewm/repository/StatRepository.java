@@ -1,8 +1,8 @@
-package ru.practicum.ewm.stat.service.repository;
+package ru.practicum.ewm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.practicum.ewm.stat.common.model.StatRecord;
+import ru.practicum.ewm.model.StatRecord;
 
 import java.time.LocalDateTime;
 

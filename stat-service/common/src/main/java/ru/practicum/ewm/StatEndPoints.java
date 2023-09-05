@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stat.common;
+package ru.practicum.ewm;
 
 public class StatEndPoints {
 

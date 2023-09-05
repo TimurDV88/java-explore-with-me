@@ -1,6 +1,6 @@
-package ru.practicum.ewm.stat.common.dto;
+package ru.practicum.ewm.dto;
 
-import ru.practicum.ewm.stat.common.model.StatRecord;
+import ru.practicum.ewm.model.StatRecord;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,15 +1,15 @@
-package ru.practicum.ewm.stat.service.service;
+package ru.practicum.ewm.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.stat.service.repository.StatRepository;
-import ru.practicum.ewm.stat.common.dto.FullStatDto;
-import ru.practicum.ewm.stat.common.dto.NewStatDto;
-import ru.practicum.ewm.stat.common.dto.StatDtoToReturn;
-import ru.practicum.ewm.stat.common.dto.StatMapper;
-import ru.practicum.ewm.stat.common.model.StatRecord;
+import ru.practicum.ewm.repository.StatRepository;
+import ru.practicum.ewm.dto.FullStatDto;
+import ru.practicum.ewm.dto.NewStatDto;
+import ru.practicum.ewm.dto.StatDtoToReturn;
+import ru.practicum.ewm.dto.StatMapper;
+import ru.practicum.ewm.model.StatRecord;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

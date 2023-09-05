@@ -1,12 +1,12 @@
-package ru.practicum.ewm.stat.client;
+package ru.practicum.ewm;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.stat.common.dto.NewStatDto;
-import ru.practicum.ewm.stat.common.dto.StatMapper;
+import ru.practicum.ewm.dto.NewStatDto;
+import ru.practicum.ewm.dto.StatMapper;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

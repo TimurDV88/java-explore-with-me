@@ -1,30 +1,32 @@
-package ru.practicum.ewm.stat.client;
+package ru.practicum.ewm;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.ewm.stat.common.StatEndPoints;
-import ru.practicum.ewm.stat.common.dto.NewStatDto;
+import ru.practicum.ewm.dto.FullStatDto;
+import ru.practicum.ewm.dto.NewStatDto;
+import ru.practicum.ewm.dto.StatDtoToReturn;
+import ru.practicum.ewm.service.StatService;
 
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class StatClientController {
+public class StatServiceController {
 
-    private final StatClientService statClientService;
+    private final StatService statService;
 
     @PostMapping(StatEndPoints.POST_RECORD_PATH)
-    public ResponseEntity<Object> addNewStatRecord(@RequestBody NewStatDto newStatDto) {
+    public FullStatDto addNewStatRecord(@RequestBody NewStatDto newStatDto) {
 
-        return statClientService.add(newStatDto);
+        return statService.add(newStatDto);
     }
 
     @GetMapping(StatEndPoints.GET_STAT_PATH)
-    public ResponseEntity<Object> getRecordsByParams(
+    public List<StatDtoToReturn> getRecordsByParams(
 
             @RequestParam(value = "start") String start,
             @RequestParam(value = "end") String end,
@@ -32,6 +34,6 @@ public class StatClientController {
             @RequestParam(value = "unique", defaultValue = "false") boolean unique
     ) {
 
-        return statClientService.get(start, end, uris, unique);
+        return statService.get(start, end, uris, unique);
     }
 }

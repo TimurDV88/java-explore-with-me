@@ -1,14 +1,13 @@
-package ru.practicum.ewm.stat.common.dto;
+package ru.practicum.ewm.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class NewStatDto {
+public class StatDtoToReturn {
 
     private final String app;
     private final String uri;
-    private final String ip;
-    private final String timestamp;
+    private final Integer hits;
 }
