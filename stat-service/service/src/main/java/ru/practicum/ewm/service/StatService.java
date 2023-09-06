@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.repository.StatRepository;
-import ru.practicum.ewm.dto.FullStatDto;
 import ru.practicum.ewm.dto.NewStatDto;
 import ru.practicum.ewm.dto.StatDtoToReturn;
 import ru.practicum.ewm.dto.StatMapper;
+import ru.practicum.ewm.dto.StatRecordDto;
 import ru.practicum.ewm.model.StatRecord;
+import ru.practicum.ewm.repository.StatRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +26,19 @@ public class StatService {
     private final StatRepository statRepository;
     private static final String APP_NAME = "ewm-main-service";
 
-    public FullStatDto add(NewStatDto newStatDto) {
+    public StatRecordDto add(NewStatDto newStatDto) {
 
         log.info("-- Добавление записи: {}", newStatDto);
 
-        StatRecord record = StatMapper.newStatToRecord(newStatDto);
+        StatRecordDto recordDto = StatMapper.newStatToRecordDto(newStatDto);
 
-        FullStatDto fullDtoToReturn = StatMapper.recordToFullDto(statRepository.save(record));
+        StatRecord record = statRepository.save(new StatRecord(recordDto));
 
-        log.info("-- Запись добавлена: {}", fullDtoToReturn);
+        recordDto.setId(record.getId());
 
-        return fullDtoToReturn;
+        log.info("-- Запись добавлена: {}", recordDto);
+
+        return recordDto;
     }
 
     public List<StatDtoToReturn> get(String start, String end, String[] uris, boolean unique) {
@@ -48,8 +51,15 @@ public class StatService {
         );
 
         List<StatDtoToReturn> listToReturn = new ArrayList<>();
-        LocalDateTime startTime = LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
-        LocalDateTime endTime = LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
+
+        start = java.net.URLDecoder.decode(start, StandardCharsets.UTF_8);
+        end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
+
+        LocalDateTime startTime =
+                LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
+        LocalDateTime endTime =
+                LocalDateTime.parse(end.replace("%20", " "), StatMapper.DATE_TIME_FORMATTER);
+
         int hits;
 
         for (String uri : uris) {

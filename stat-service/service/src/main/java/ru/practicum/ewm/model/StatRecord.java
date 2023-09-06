@@ -3,6 +3,8 @@ package ru.practicum.ewm.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.ewm.dto.StatMapper;
+import ru.practicum.ewm.dto.StatRecordDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ public class StatRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "app", nullable = false)
     private String app;
 
     @Column(name = "uri", nullable = false)
@@ -29,4 +31,13 @@ public class StatRecord {
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
+
+    public StatRecord(StatRecordDto statRecordDto) {
+
+        this.id = statRecordDto.getId();
+        this.app = statRecordDto.getApp();
+        this.uri = statRecordDto.getUri();
+        this.ip = statRecordDto.getIp();
+        this.timestamp = LocalDateTime.parse(statRecordDto.getTimestamp(), StatMapper.DATE_TIME_FORMATTER);
+    }
 }

@@ -1,4 +1,4 @@
-drop table IF EXISTS records;
+--drop table IF EXISTS records;
 
 CREATE TABLE IF NOT EXISTS records (
 

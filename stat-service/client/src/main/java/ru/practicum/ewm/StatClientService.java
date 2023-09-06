@@ -32,20 +32,25 @@ public class StatClientService {
                                       String[] uris,
                                       boolean unique) {
 
-        log.info("--- Получен запрос на получение статистики, start: {}, end: {}, uris: {}, unique: {}",
+        log.info("--- Получен запрос на получение статистики: start={}, end={}, uris={}, unique={}",
                 start,
                 end,
                 Arrays.toString(uris),
                 unique);
 
         try {
+
             LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
             LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
+
+            return statClient.get(start, end, uris, unique);
+
         } catch (Exception e) {
+
             log.error("- Неверный формат даты начала или конца периода: {}, {}", start, end);
             return ResponseEntity.badRequest().build();
         }
 
-        return statClient.get(start, end, uris, unique);
+
     }
 }

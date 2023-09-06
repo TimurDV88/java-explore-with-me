@@ -1,12 +1,12 @@
 package ru.practicum.ewm;
 
 import org.springframework.http.*;
-import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.Map;
 
 public class StatClient {
 
@@ -21,22 +21,46 @@ public class StatClient {
 
         String path = StatEndPoints.POST_RECORD_PATH;
 
-        return makeAndSendRequest(HttpMethod.POST, path, null, body);
+        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
+
+        ResponseEntity<Object> statServiceResponse;
+
+        try {
+
+            statServiceResponse = rest.exchange(path, HttpMethod.POST, requestEntity, Object.class);
+
+        } catch (HttpStatusCodeException e) {
+
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        }
+
+        return prepareStatResponse(statServiceResponse);
     }
 
     protected ResponseEntity<Object> get(String start, String end, String[] uris, boolean unique) {
 
         String path = StatEndPoints.GET_STAT_PATH;
 
-        Map<String, Object> parameters = Map.of(
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath(path)
+                .queryParam("start", start)
+                .queryParam("end", end)
+                .queryParam("uris", uris)
+                .queryParam("unique", unique);
 
-                "start", start,
-                "end", end,
-                "uris", uris,
-                "unique", unique
-        );
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(defaultHeaders());
 
-        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
+        ResponseEntity<Object> statServiceResponse;
+
+        try {
+
+            statServiceResponse = rest.exchange(uriBuilder.toUriString(), HttpMethod.GET, requestEntity, Object.class);
+
+        } catch (HttpStatusCodeException e) {
+
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        }
+
+        return statServiceResponse;
     }
 
     private HttpHeaders defaultHeaders() {
@@ -46,31 +70,6 @@ public class StatClient {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         return headers;
-    }
-
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method,
-                                                          String path,
-                                                          @Nullable Map<String, Object> parameters,
-                                                          @Nullable T body) {
-
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
-
-        ResponseEntity<Object> shareItServerResponse;
-
-        try {
-
-            if (parameters != null) {
-                shareItServerResponse = rest.exchange(path, method, requestEntity, Object.class, parameters);
-            } else {
-                shareItServerResponse = rest.exchange(path, method, requestEntity, Object.class);
-            }
-
-        } catch (HttpStatusCodeException e) {
-
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
-        }
-
-        return prepareStatResponse(shareItServerResponse);
     }
 
     private static ResponseEntity<Object> prepareStatResponse(ResponseEntity<Object> response) {
