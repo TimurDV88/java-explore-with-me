@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -62,18 +63,26 @@ public class StatService {
 
         int hits;
 
+        if (uris == null) {
+
+            uris = statRepository.listOfAllUris(startTime, endTime).toArray((new String[0]));
+
+        }
+
         for (String uri : uris) {
 
             if (unique) {
-                hits = statRepository.sizeOfUniqueRecordsList(startTime, endTime, uri);
+                hits = statRepository.sizeOfUniqueIpRecordsListByUri(startTime, endTime, uri);
             } else {
-                hits = statRepository.sizeOfAllRecordsList(startTime, endTime, uri);
+                hits = statRepository.sizeOfAllRecordsListByUri(startTime, endTime, uri);
             }
 
             listToReturn.add(new StatDtoToReturn(APP_NAME, uri, hits));
         }
 
         log.info("-- Список возвращен, его размер: {}", listToReturn.size());
+
+        listToReturn.sort(Comparator.reverseOrder());
 
         return listToReturn;
     }

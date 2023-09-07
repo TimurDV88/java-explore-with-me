@@ -10,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stat-service</artifactId>
+    <artifactId>ewm-stat-service</artifactId>
 
     <packaging>pom</packaging>
 
@@ -84,10 +84,9 @@
     <build>
         <plugins>
 
-<!--            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>-->
+            <!-- Added plugin -->
+
+
 
         </plugins>
     </build>
