@@ -16,12 +16,13 @@ import ru.practicum.ewm.user.dto.UserShortDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService {
+public class UserAdminService {
 
     private final UserRepository userRepository;
 
@@ -45,19 +46,16 @@ public class UserService {
         }
     }
 
-    public List<UserFullDto> get(List<Long> userIds, int from, int size) {
+    public List<UserFullDto> get(Long[] userIds, int from, int size) {
 
-        log.info("-- Возвращение пользователей с номерами:{}", userIds.toString());
+        log.info("-- Возвращение пользователей с номерами:{}", Arrays.toString(userIds));
 
         PageRequest pageRequest;
 
         if (size > 0 && from >= 0) {
-
             int page = from / size;
             pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
-
         } else {
-
             throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
         }
 

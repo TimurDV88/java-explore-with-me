@@ -16,6 +16,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,8 +29,7 @@ public class PartRequestService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-
-    public PartRequestDto add(Long requesterId, Long eventId, PartRequestDto newPartRequestDto) {
+    public PartRequestDto add(Long requesterId, Long eventId) {
 
         log.info("-- Добавление запроса от пользователя id={} на участие в событии id={}",
                 requesterId, eventId);
@@ -61,7 +61,12 @@ public class PartRequestService {
         }
         // конец блока проверок
 
-        ParticipationRequest participationRequest = PartRequestMapper.partRequestDtoToModel(newPartRequestDto);
+        // создаём новый запрос
+        ParticipationRequest participationRequest = new ParticipationRequest();
+
+        participationRequest.setCreated(LocalDateTime.now());
+        participationRequest.setEventId(eventId);
+        participationRequest.setRequesterId(requesterId);
 
         if (!event.getRequestModeration()) {
             participationRequest.setState(PartRequestState.CONFIRMED);

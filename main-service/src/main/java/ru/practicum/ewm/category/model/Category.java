@@ -1,4 +1,4 @@
-package ru.practicum.ewm.category;
+package ru.practicum.ewm.category.model;
 
 import lombok.Getter;
 import lombok.Setter;

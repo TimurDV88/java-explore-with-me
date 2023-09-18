@@ -11,7 +11,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @Configuration
 public class StatClientConfig {
 
-    @Value("${stat-service.url}")
+    @Value("${stat-server.url}")
     private String statServiceUrl;
 
     private RestTemplate buildRestTemplate(RestTemplateBuilder builder) {

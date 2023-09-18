@@ -5,7 +5,6 @@ import ru.practicum.ewm.event.model.Location;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 public class NewEventDto {
@@ -15,7 +14,7 @@ public class NewEventDto {
     private final String annotation;
 
     @NotNull
-    private final Long categoryId;
+    private final Long category;
 
     @NotNull
     @NotBlank

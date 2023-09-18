@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "part_request")
+@Table(name = "part_requests")
 @Getter
 @Setter
 @ToString

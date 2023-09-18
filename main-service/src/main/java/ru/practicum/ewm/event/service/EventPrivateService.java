@@ -13,8 +13,8 @@ import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
 import ru.practicum.ewm.ParticipationRequest.model.PartRequestUpdateState;
 import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
 import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
-import ru.practicum.ewm.category.Category;
-import ru.practicum.ewm.category.CategoryRepository;
+import ru.practicum.ewm.category.model.Category;
+import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.error.exception.ConflictOnRequestException;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
@@ -33,12 +33,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EventService {
+public class EventPrivateService {
 
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-
     private final PartRequestRepository partRequestRepository;
 
 
@@ -54,8 +53,8 @@ public class EventService {
         }
         // конец блока проверок
 
-        Category category = categoryRepository.findById(newEventDto.getCategoryId()).orElseThrow(() ->
-                new NotFoundException("- Категория №" + newEventDto.getCategoryId() + " не найдена в базе"));
+        Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() ->
+                new NotFoundException("- Категория №" + newEventDto.getCategory() + " не найдена в базе"));
 
         User initiator = userRepository.findById(initiatorId).orElseThrow(() ->
                 new NotFoundException("- Пользователь с id=" + initiatorId + " не найден"));
@@ -64,6 +63,8 @@ public class EventService {
 
         event.setConfirmedRequests(0);
         event.setCreatedOn(LocalDateTime.now());
+        event.setState(EventState.PENDING);
+        event.setViews(0);
 
         EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event));
 
@@ -72,7 +73,7 @@ public class EventService {
         return eventFullDto;
     }
 
-    public List<EventShortDto> getByUserId(Long initiatorId, int from, int size) {
+    public List<EventShortDto> getByInitiatorId(Long initiatorId, int from, int size) {
 
         log.info("-- Возвращение всех событий от пользователя id={}", initiatorId);
 
@@ -80,13 +81,13 @@ public class EventService {
 
         if (size > 0 && from >= 0) {
             int page = from / size;
-            pageRequest = PageRequest.of(page, size, Sort.by("event_date").ascending());
+            pageRequest = PageRequest.of(page, size, Sort.by("eventDate").ascending());
         } else {
             throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
         }
 
         List<EventShortDto> listToReturn = EventMapper.eventToShortDto(
-                eventRepository.findAllByInitiatorId(initiatorId, pageRequest));
+                eventRepository.findByInitiatorId(initiatorId, pageRequest));
 
         log.info("-- Список событий от пользователя id={} возвращён, его размер: {}", initiatorId, listToReturn.size());
 
@@ -113,7 +114,7 @@ public class EventService {
         return eventFullDto;
     }
 
-    public EventFullDto updateEventByUser(Long initiatorId, Long eventId, UpdateEventUserRequest updateRequest) {
+    public EventFullDto updateEventByInitiator(Long initiatorId, Long eventId, UpdateEventUserRequest updateRequest) {
 
         log.info("-- Обновление события id={} от пользователя id={}", eventId, initiatorId);
 
@@ -137,8 +138,8 @@ public class EventService {
 
         EventMapper.setIfNotNull(event::setAnnotation, updateRequest.getAnnotation());
 
-        if (updateRequest.getCategoryId() != null) {
-            Long categoryId = updateRequest.getCategoryId();
+        if (updateRequest.getCategory() != null) {
+            Long categoryId = updateRequest.getCategory();
             Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
                     new NotFoundException("- Категория с id=" + categoryId + " не найдена"));
             event.setCategory(category);
@@ -151,7 +152,10 @@ public class EventService {
         EventMapper.setIfNotNull(event::setParticipantLimit, updateRequest.getParticipantLimit());
         EventMapper.setIfNotNull(event::setRequestModeration, updateRequest.getRequestModeration());
 
-        // private UpdateEventUserRequest.StateAction stateAction; - хз чё делать с этим
+        if (updateRequest.getStateAction() != null
+                && (updateRequest.getStateAction().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW))) {
+            event.setState(EventState.CANCELED);
+        }
 
         EventMapper.setIfNotNull(event::setTitle, updateRequest.getTitle());
 
@@ -186,8 +190,11 @@ public class EventService {
         return listToReturn;
     }
 
-    public EventRequestStatusUpdateResult updateRequestStatus(Long initiatorId, Long eventId,
-                                                              EventRequestStatusUpdateRequest statusUpdateRequest) {
+    public EventRequestStatusUpdateResult updateRequestStatusFromInitiator(
+
+            Long initiatorId,
+            Long eventId,
+            EventRequestStatusUpdateRequest statusUpdateRequest) {
 
         List<Long> ids = statusUpdateRequest.getRequestIds();
 
@@ -197,11 +204,11 @@ public class EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
 
-        Integer confirmedRequests;
+        Integer numberOfConfirmedRequests;
         if (event.getConfirmedRequests() != null) {
-            confirmedRequests = event.getConfirmedRequests();
+            numberOfConfirmedRequests = event.getConfirmedRequests();
         } else {
-            confirmedRequests = 0;
+            numberOfConfirmedRequests = 0;
         }
 
         //блок проверок
@@ -213,7 +220,7 @@ public class EventService {
             throw new IncorrectRequestException("- Пользователь не является инициатором события id=" + eventId);
         }
 
-        if (confirmedRequests >= event.getParticipantLimit()) {
+        if (numberOfConfirmedRequests >= event.getParticipantLimit()) {
             throw new ConflictOnRequestException("- Достигнут лимит запросов на участие в событии");
         }
         //конец блока проверок
@@ -233,7 +240,7 @@ public class EventService {
                 continue;
             }
 
-            if (confirmedRequests >= event.getParticipantLimit()
+            if (numberOfConfirmedRequests >= event.getParticipantLimit()
                     || stateToSet.equals(PartRequestUpdateState.REJECTED)) {
 
                 request.setState(PartRequestState.REJECTED);
@@ -249,15 +256,15 @@ public class EventService {
 
             request.setState(PartRequestState.CONFIRMED);
             confirmedIds.add(requestId);
-            confirmedRequests++;
+            numberOfConfirmedRequests++;
         }
 
         partRequestRepository.setStatus(confirmedIds, PartRequestState.CONFIRMED);
         partRequestRepository.setStatus(rejectedIds, PartRequestState.REJECTED);
 
-        eventRepository.updateConfirmedRequests(eventId, confirmedRequests);
+        eventRepository.updateConfirmedRequests(eventId, numberOfConfirmedRequests);
         log.info("-- Число подтвержденных запросов на участие в событии с id={} обновлено: {}",
-                eventId, confirmedRequests);
+                eventId, numberOfConfirmedRequests);
 
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(
                 PartRequestMapper.partRequestToDto(

@@ -3,7 +3,8 @@ package ru.practicum.ewm.event.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.category.Category;
+import org.hibernate.annotations.Type;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.user.model.User;
 
 import javax.persistence.*;
@@ -27,35 +28,35 @@ public class Event {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name = "confirmedRequests")
+    @Column(name = "confirmed_requests")
     private Integer confirmedRequests;
 
-    @Column(name = "createdOn")
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "eventDate", nullable = false)
+    @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id", nullable = false)
     private User initiator;
 
-    @Column(name = "location", nullable = false)
+    @Embedded
     private Location location;
 
     @Column(name = "paid", nullable = false)
     private boolean paid;
 
-    @Column(name = "participantLimit")
+    @Column(name = "participant_limit")
     private Integer participantLimit;
 
-    @Column(name = "publishedOn")
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    @Column(name = "requestModeration")
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
 
     @Column(name = "state")

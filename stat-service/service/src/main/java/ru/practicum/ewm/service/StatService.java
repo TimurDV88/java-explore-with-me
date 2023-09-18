@@ -25,7 +25,7 @@ import java.util.List;
 public class StatService {
 
     private final StatRepository statRepository;
-    private static final String APP_NAME = "ewm-main-service";
+    //private static final String APP_NAME = "ewm-main-service";
 
     public StatRecordDto add(NewStatDto newStatDto) {
 
@@ -42,9 +42,10 @@ public class StatService {
         return recordDto;
     }
 
-    public List<StatDtoToReturn> get(String start, String end, String[] uris, boolean unique) {
+    public List<StatDtoToReturn> get(String appName, String start, String end, String[] uris, boolean unique) {
 
-        log.info("-- Возвращение списка записей: start = {}, end = {}, uris = {}, unique = {}",
+        log.info("-- Возвращение списка записей: app={}, start={}, end={}, uris={}, unique={}",
+                appName,
                 start,
                 end,
                 Arrays.toString(uris),
@@ -59,30 +60,30 @@ public class StatService {
         LocalDateTime startTime =
                 LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
         LocalDateTime endTime =
-                LocalDateTime.parse(end.replace("%20", " "), StatMapper.DATE_TIME_FORMATTER);
+                LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
 
         int hits;
 
         if (uris == null) {
 
-            uris = statRepository.listOfAllUris(startTime, endTime).toArray((new String[0]));
+            uris = statRepository.listOfAllUris(appName, startTime, endTime).toArray((new String[0]));
 
         }
 
         for (String uri : uris) {
 
             if (unique) {
-                hits = statRepository.sizeOfUniqueIpRecordsListByUri(startTime, endTime, uri);
+                hits = statRepository.sizeOfUniqueIpRecordsListByUri(appName, startTime, endTime, uri);
             } else {
-                hits = statRepository.sizeOfAllRecordsListByUri(startTime, endTime, uri);
+                hits = statRepository.sizeOfAllRecordsListByUri(appName, startTime, endTime, uri);
             }
 
-            listToReturn.add(new StatDtoToReturn(APP_NAME, uri, hits));
+            listToReturn.add(new StatDtoToReturn(appName, uri, hits));
         }
 
-        log.info("-- Список возвращен, его размер: {}", listToReturn.size());
-
         listToReturn.sort(Comparator.reverseOrder());
+
+        log.info("-- Список возвращен, его размер: {}", listToReturn.size());
 
         return listToReturn;
     }
