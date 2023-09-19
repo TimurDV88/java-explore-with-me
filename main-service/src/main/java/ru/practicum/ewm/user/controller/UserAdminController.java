@@ -6,6 +6,7 @@ import ru.practicum.ewm.user.dto.NewUserDto;
 import ru.practicum.ewm.user.dto.UserFullDto;
 import ru.practicum.ewm.user.service.UserAdminService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
 
     @PostMapping
-    public UserFullDto add(@RequestBody @NotNull NewUserDto newUserDto) {
+    public UserFullDto add(@RequestBody @Valid NewUserDto newUserDto) {
 
         return userAdminService.add(newUserDto);
     }

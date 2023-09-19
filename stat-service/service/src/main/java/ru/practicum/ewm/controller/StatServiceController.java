@@ -25,9 +25,9 @@ public class StatServiceController {
     @GetMapping(StatEndPoints.GET_STAT_PATH)
     public List<StatDtoToReturn> getRecordsByParams(
 
-            @RequestParam(value = "app", defaultValue = "ewm-main-service") String appName,
-            @RequestParam(value = "start", required = false) String start,
-            @RequestParam(value = "end", required = false) String end,
+            @RequestParam(value = "app") String appName,
+            @RequestParam(value = "start", defaultValue = "none") String start,
+            @RequestParam(value = "end", defaultValue = "none") String end,
             @RequestParam(value = "uris", required = false) String[] uris,
             @RequestParam(value = "unique", defaultValue = "false") boolean unique
     ) {

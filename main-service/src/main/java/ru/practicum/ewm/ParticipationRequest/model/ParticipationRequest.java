@@ -28,5 +28,5 @@ public class ParticipationRequest {
     private Long requesterId;
 
     @Column(name = "state")
-    private PartRequestState state;
+    private String state;
 }

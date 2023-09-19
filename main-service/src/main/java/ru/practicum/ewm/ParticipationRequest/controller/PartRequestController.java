@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.ParticipationRequest.dto.PartRequestDto;
 import ru.practicum.ewm.ParticipationRequest.service.PartRequestService;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -30,7 +29,7 @@ public class PartRequestController {
 
     @PatchMapping("/requestId/cancel")
     public PartRequestDto cancelPartRequest(@PathVariable(value = "userId") Long requesterId,
-                                            @PathVariable Long requestId) {
+                                            @PathVariable(value = "requestId") Long requestId) {
 
         return partRequestService.cancelPartRequest(requesterId, requestId);
     }

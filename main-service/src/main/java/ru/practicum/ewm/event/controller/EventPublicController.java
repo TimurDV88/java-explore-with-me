@@ -16,25 +16,24 @@ import java.util.List;
 @RequestMapping(path = "/events")
 public class EventPublicController {
 
-    @Value("${app-name}")
-    private String appName;
+
 
     private final EventPublicService eventPublicService;
 
-    private final StatClientService statClientService;
+
 
     @GetMapping
-    public List<EventShortDto> getEventsByParams(
+    public List<EventShortDto> getByParameters(
 
             HttpServletRequest request,
 
-            @RequestParam(value = "text", defaultValue = "") String text,
-            @RequestParam(value = "categories") Integer[] categories,
-            @RequestParam(value = "paid") Boolean paid,
-            @RequestParam(value = "rangeStart") String rangeStart,
-            @RequestParam(value = "rangeEnd") String rangeEnd,
+            @RequestParam(value = "text", required = false) String text,
+            @RequestParam(value = "categories", required = false) Long[] categories,
+            @RequestParam(value = "paid", required = false) Boolean paid,
+            @RequestParam(value = "rangeStart", required = false) String rangeStart,
+            @RequestParam(value = "rangeEnd", required = false) String rangeEnd,
             @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
-            @RequestParam(value = "sort") String sort,
+            @RequestParam(value = "sort", defaultValue = "EVENT_DATE") String sort,
             @RequestParam(value = "from", defaultValue = "0") int from,
             @RequestParam(value = "size", defaultValue = "10") int size
 
@@ -43,9 +42,7 @@ public class EventPublicController {
         String uri = request.getRequestURI();
         String ip = request.getRemoteAddr();
 
-        statClientService.add(appName, uri, ip);
-
-        return eventPublicService.getByParameters(
+        return eventPublicService.getByParameters(uri, ip,
 
                 text,
                 categories,
@@ -59,14 +56,12 @@ public class EventPublicController {
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable Long eventId, HttpServletRequest request) {
+    public EventFullDto getById(@PathVariable (value = "id") Long eventId, HttpServletRequest request) {
 
         String uri = request.getRequestURI();
         String ip = request.getRemoteAddr();
 
-        statClientService.add(appName, uri, ip);
-
-        return eventPublicService.getById(eventId);
+        return eventPublicService.getById(eventId, uri, ip);
     }
 
 }

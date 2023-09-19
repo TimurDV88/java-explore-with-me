@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryAdminService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -15,7 +16,7 @@ public class CategoryAdminController {
     private final CategoryAdminService categoryAdminService;
 
     @PostMapping
-    public CategoryDto add(@RequestBody @NotNull CategoryDto categoryDto) {
+    public CategoryDto add(@RequestBody @Valid CategoryDto categoryDto) {
 
         return categoryAdminService.add(categoryDto);
     }

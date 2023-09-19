@@ -8,8 +8,8 @@ import java.util.List;
 @Data
 public class EventRequestStatusUpdateRequest {
 
-    private final List<Long> requestIds;
+    private List<Long> requestIds;
 
-    private final PartRequestUpdateState partRequestState;
+    private PartRequestUpdateState partRequestState;
 
 }

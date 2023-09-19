@@ -10,9 +10,7 @@ import ru.practicum.ewm.dto.StatMapper;
 import ru.practicum.ewm.dto.StatRecordDto;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 @Service
 @Slf4j
@@ -22,47 +20,36 @@ public class StatClientService {
 
     private final StatClient statClient;
 
-    public StatRecordDto add(String app,
-                             String uri,
-                             String ip) {
+    public void addStatRecord(String app,
+                              String uri,
+                              String ip) {
 
-        log.info("--- Получен запрос на создание записи: app={}, uri={}, ip={}",
-                app, uri, ip);
+        log.info("-STAT- Получен запрос на создание записи: app={}, uri={}, ip={}", app, uri, ip);
 
         String timestamp = LocalDateTime.now().format(StatMapper.DATE_TIME_FORMATTER);
 
         NewStatDto newStatDto = new NewStatDto(app, uri, ip, timestamp);
 
-        return statClient.post(newStatDto).getBody();
+        StatRecordDto statRecordDto = statClient.post(newStatDto).getBody();
+
+        log.info("-STAT- Запись создана: {}", statRecordDto);
     }
 
-    public List<StatDtoToReturn> get(String appName,
-                                     String start,
-                                     String end,
-                                     String[] uris,
-                                     boolean unique) throws DataFormatException {
+    public Integer getViewsByUri(String appName, String uri) {
 
-        log.info("--- Получен запрос на получение статистики: app = {}, start={}, end={}, uris={}, unique={}",
-                appName,
-                start,
-                end,
-                Arrays.toString(uris),
-                unique);
+        log.info("-STAT- Получен запрос на получение количества просмотров: app = {}, uri={}", appName, uri);
 
-        try {
+        String[] uris = new String[]{uri};
+        boolean unique = true;
+        List<StatDtoToReturn> listOfStatDto = statClient.get(appName, null, null, uris, unique).getBody();
+        Integer views = 0;
 
-            LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
-            LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
-
-            return statClient.get(appName, start, end, uris, unique).getBody();
-
-        } catch (Exception e) {
-
-            log.error("- Неверный формат даты начала или конца периода: {}, {}", start, end);
-            throw new DataFormatException(e.getMessage());
-            //return ResponseEntity.badRequest().build();
+        if (listOfStatDto != null) {
+            views = listOfStatDto.get(0).getHits();
         }
 
+        log.info("-STAT- Количество просмотров по uri={}: {}", uri, views);
 
+        return views;
     }
 }

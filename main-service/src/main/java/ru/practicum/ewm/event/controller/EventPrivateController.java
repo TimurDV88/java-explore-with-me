@@ -11,6 +11,7 @@ import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.service.EventPrivateService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class EventPrivateController {
 
     @PostMapping
     public EventFullDto add(@PathVariable(value = "userId") Long initiatorId,
-                            @RequestBody NewEventDto newEventDto) {
+                            @RequestBody @Valid NewEventDto newEventDto) {
 
         return eventPrivateService.add(initiatorId, newEventDto);
     }
@@ -38,31 +39,31 @@ public class EventPrivateController {
 
     @GetMapping("/{eventId}")
     public EventFullDto getById(@PathVariable(value = "userId") Long initiatorId,
-                                @PathVariable Long eventId) {
+                                @PathVariable(value = "eventId") Long eventId) {
 
         return eventPrivateService.getById(initiatorId, eventId);
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEventByUser(@PathVariable(value = "userId") Long initiatorId,
-                                          @PathVariable Long eventId,
-                                          @RequestBody UpdateEventUserRequest updateRequest) {
+    public EventFullDto updateEventByInitiator(@PathVariable(value = "userId") Long initiatorId,
+                                               @PathVariable(value = "eventId") Long eventId,
+                                               @RequestBody UpdateEventUserRequest updateRequest) {
 
         return eventPrivateService.updateEventByInitiator(initiatorId, eventId, updateRequest);
     }
 
     @GetMapping("/{eventId}/requests")
     public List<PartRequestDto> getRequests(@PathVariable(value = "userId") Long initiatorId,
-                                            @PathVariable Long eventId) {
+                                            @PathVariable(value = "eventId") Long eventId) {
 
         return eventPrivateService.getRequests(initiatorId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateRequestStatus(
+    public EventRequestStatusUpdateResult updateRequestStatusFromInitiator(
 
             @PathVariable(value = "userId") Long initiatorId,
-            @PathVariable Long eventId,
+            @PathVariable(value = "eventId") Long eventId,
             @RequestBody EventRequestStatusUpdateRequest statusUpdateRequest) {
 
         return eventPrivateService.updateRequestStatusFromInitiator(initiatorId, eventId, statusUpdateRequest);

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class CategoryPublicController {
     }
 
     @GetMapping("/{catId}")
-    public CategoryDto getById(@PathVariable @NotNull Long catId) {
+    public CategoryDto getById(@PathVariable(value = "catId") Long catId) {
 
         return categoryPublicService.getById(catId);
     }

@@ -61,9 +61,13 @@ public class EventPrivateService {
 
         Event event = EventMapper.newEventToModel(newEventDto, category, initiator);
 
+        if (newEventDto.getPaid() == null) {
+            event.setPaid(false);
+        }
+
         event.setConfirmedRequests(0);
         event.setCreatedOn(LocalDateTime.now());
-        event.setState(EventState.PENDING);
+        event.setState(EventState.PENDING.toString());
         event.setViews(0);
 
         EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event));
@@ -126,7 +130,7 @@ public class EventPrivateService {
             throw new IncorrectRequestException("- Пользователь не является инициатором события id=" + eventId);
         }
 
-        if (event.getState() == EventState.PUBLISHED) {
+        if (event.getState().equals(EventState.PUBLISHED.toString())) {
             throw new ConflictOnRequestException("- Нельзя изенять событие со статусом " + EventState.PUBLISHED);
         }
 
@@ -154,7 +158,7 @@ public class EventPrivateService {
 
         if (updateRequest.getStateAction() != null
                 && (updateRequest.getStateAction().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW))) {
-            event.setState(EventState.CANCELED);
+            event.setState(EventState.CANCELED.toString());
         }
 
         EventMapper.setIfNotNull(event::setTitle, updateRequest.getTitle());
@@ -197,9 +201,10 @@ public class EventPrivateService {
             EventRequestStatusUpdateRequest statusUpdateRequest) {
 
         List<Long> ids = statusUpdateRequest.getRequestIds();
+        PartRequestUpdateState stateToSet = statusUpdateRequest.getPartRequestState();
 
-        log.info("-- Обновление статусов запросов на участие в событии id={}: {}",
-                eventId, ids.toString());
+        log.info("-- Обновление запросов №№({}) на участие в событии c id={} на статус {}",
+                ids.toString(), eventId, stateToSet);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
@@ -226,7 +231,6 @@ public class EventPrivateService {
         //конец блока проверок
 
         List<ParticipationRequest> requests = partRequestRepository.findByIdIn(ids);
-        PartRequestUpdateState stateToSet = statusUpdateRequest.getPartRequestState();
         List<Long> confirmedIds = new ArrayList<>();
         List<Long> rejectedIds = new ArrayList<>();
 
@@ -234,43 +238,59 @@ public class EventPrivateService {
 
             Long requestId = request.getId();
 
-            if (!request.getState().equals(PartRequestState.WAITING)) {
-                log.info("-- Запрос на участие с id={} не имеет статус {}",
-                        requestId, PartRequestState.WAITING);
-                continue;
-            }
-
-            if (numberOfConfirmedRequests >= event.getParticipantLimit()
-                    || stateToSet.equals(PartRequestUpdateState.REJECTED)) {
-
-                request.setState(PartRequestState.REJECTED);
-                rejectedIds.add(requestId);
-                continue;
-            }
-
             if (!request.getEventId().equals(eventId)) {
                 log.info("-- Запрос на участие с id={} не относится к собыию с id={}",
                         requestId, eventId);
                 continue;
             }
 
-            request.setState(PartRequestState.CONFIRMED);
-            confirmedIds.add(requestId);
+            if (!request.getState().equals(PartRequestState.WAITING.toString())) {
+                log.info("-- Запрос на участие с id={} не имеет статус WAITING",
+                        requestId);
+                continue;
+            }
+
+            if (numberOfConfirmedRequests >= event.getParticipantLimit()
+                    || stateToSet.equals(PartRequestUpdateState.REJECTED)) {
+
+                request.setState(PartRequestState.REJECTED.toString()); // это каким-то образом обновляет статус В БАЗЕ
+                //rejectedIds.add(requestId);
+                continue;
+            }
+
+            request.setState(PartRequestState.CONFIRMED.toString()); // и это каким-то образом обновляет статус В БАЗЕ
+            //confirmedIds.add(requestId);
             numberOfConfirmedRequests++;
         }
 
-        partRequestRepository.setStatus(confirmedIds, PartRequestState.CONFIRMED);
-        partRequestRepository.setStatus(rejectedIds, PartRequestState.REJECTED);
+        // меняем статусы запросов в базе запросов (не требуется, см. предыдущие комментарии)
+        //partRequestRepository.setStatus(confirmedIds, PartRequestState.CONFIRMED.toString());
+        //partRequestRepository.setStatus(rejectedIds, PartRequestState.REJECTED.toString());
 
-        eventRepository.updateConfirmedRequests(eventId, numberOfConfirmedRequests);
+        // меняем число подтвержденных запросов события
+        event.setConfirmedRequests(numberOfConfirmedRequests); // каким-то образом это сразу обновляет БАЗУ
+        //eventRepository.save(event); // строка не нужна, см. предыдущий комментарий
+
         log.info("-- Число подтвержденных запросов на участие в событии с id={} обновлено: {}",
                 eventId, numberOfConfirmedRequests);
 
+        // получаем список запросов с id из [ids], которые относятся к данному событию
+        List<ParticipationRequest> listOfProperRequests =
+                partRequestRepository.findByEventIdAndIdIn(eventId, ids);
+
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(
+
+                // получаем список подтвержденных запросов
                 PartRequestMapper.partRequestToDto(
-                        partRequestRepository.findByEventIdAndState(eventId, PartRequestState.CONFIRMED)),
+                        listOfProperRequests.stream()
+                                .filter(p -> p.getState().equals(PartRequestState.CONFIRMED.toString()))
+                                .collect(Collectors.toList())),
+
+                // получаем список отклонённых запросов
                 PartRequestMapper.partRequestToDto(
-                        partRequestRepository.findByEventIdAndState(eventId, PartRequestState.REJECTED))
+                        listOfProperRequests.stream()
+                                .filter(p -> p.getState().equals(PartRequestState.CONFIRMED.toString()))
+                                .collect(Collectors.toList()))
         );
 
         log.info("-- Статусы запросов на участие в событии id={} обновлены, одобрено: {}, отклонено: {}",
@@ -278,6 +298,4 @@ public class EventPrivateService {
 
         return result;
     }
-
-
 }

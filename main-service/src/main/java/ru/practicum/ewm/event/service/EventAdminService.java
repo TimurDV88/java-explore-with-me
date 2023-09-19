@@ -3,7 +3,6 @@ package ru.practicum.ewm.event.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,14 +33,15 @@ public class EventAdminService {
     private final CategoryRepository categoryRepository;
 
     public List<EventShortDto> getByParams(Long[] users,
-                                           EventState[] states,
+                                           String[] states,
                                            Long[] categories,
                                            String rangeStart,
                                            String rangeEnd,
                                            int from,
                                            int size) {
 
-        log.info("-- Возвращение событий с параметрами");
+        log.info("-- Возвращение событий с параметрами (Admin): users={}, states={}, categories={}, start={}, end={}",
+                users, states, categories, rangeStart, rangeEnd);
 
         PageRequest pageRequest;
 
@@ -58,15 +57,15 @@ public class EventAdminService {
         if (users != null) {
             byUsers = QEvent.event.initiator.id.in(users);
         } else {
-            byUsers = QEvent.event.isNotNull();
+            byUsers = QEvent.event.id.isNotNull();
         }
 
         // статусы
         BooleanExpression byStates;
         if (states != null) {
-            byStates = QEvent.event.state.in(Arrays.asList(states));
+            byStates = QEvent.event.state.in(states);
         } else {
-            byStates = QEvent.event.isNotNull();
+            byStates = null;
         }
 
         // категории
@@ -74,7 +73,7 @@ public class EventAdminService {
         if (categories != null) {
             byCategory = QEvent.event.category.id.in(categories);
         } else {
-            byCategory = QEvent.event.isNotNull();
+            byCategory = null;
         }
 
         // блок старт
@@ -92,30 +91,30 @@ public class EventAdminService {
         if (rangeEnd != null) {
             byEnd = QEvent.event.eventDate.before(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
         } else {
-            byEnd = QEvent.event.isNotNull();
+            byEnd = null;
         }
 
         // запрос в бд через QDSL
         Iterable<Event> foundEvents = eventRepository.findAll(byUsers
 
-                        .and(byStates)
-                        .and(byCategory)
-                        .and(byStart)
-                        .and(byEnd));
+                .and(byStates)
+                .and(byCategory)
+                .and(byStart)
+                .and(byEnd));
 
-                //pageRequest);
+        //pageRequest);
 
         // маппинг для возврата полученного списка
         List<EventShortDto> listToReturn = EventMapper.eventToShortDto(foundEvents);
 
-        log.info("-- Список событий возвращён, его размер: {}", listToReturn.size());
+        log.info("-- Список событий (Admin) возвращён, его размер: {}", listToReturn.size());
 
         return listToReturn;
     }
 
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
 
-        log.info("-- Обновление события id={} от admin", eventId);
+        log.info("-- Обновление события id={} от admin: {}", eventId, updateRequest);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
@@ -145,16 +144,16 @@ public class EventAdminService {
 
         if (updateRequest.getStateAction() != null) {
             if (updateRequest.getStateAction().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT)) {
-                event.setState(EventState.PUBLISHED);
+                event.setState(EventState.PUBLISHED.toString());
                 event.setPublishedOn(LocalDateTime.now());
             } else if (updateRequest.getStateAction().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT)) {
-                event.setState(EventState.CANCELED);
+                event.setState(EventState.CANCELED.toString());
             }
         }
 
         EventMapper.setIfNotNull(event::setTitle, updateRequest.getTitle());
 
-        EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event));
+        EventFullDto eventFullDto = EventMapper.eventToFullDto(event); //eventRepository.save(event)); - не нужно
 
         log.info("-- Событие id={} от admin обновлено", eventId);
 

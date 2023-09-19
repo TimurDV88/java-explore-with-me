@@ -1,8 +1,9 @@
 package ru.practicum.ewm.event.dto;
 
-import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.dto.CategoryMapper;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.user.dto.UserMapper;
 import ru.practicum.ewm.user.model.User;
 
@@ -58,7 +59,7 @@ public class EventMapper {
                 event.getParticipantLimit(),
                 event.getPublishedOn(),
                 event.getRequestModeration(),
-                event.getState(),
+                EventState.valueOf(event.getState()),
                 event.getTitle(),
                 event.getViews()
         );

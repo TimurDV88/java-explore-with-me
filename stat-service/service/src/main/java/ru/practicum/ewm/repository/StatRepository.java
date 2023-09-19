@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface StatRepository extends JpaRepository<StatRecord, Long> {
 
+    boolean existsByApp(String appName);
+
     /*
         Методы поиска записей по uri
      */

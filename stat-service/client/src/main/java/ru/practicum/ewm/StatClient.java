@@ -34,10 +34,10 @@ public class StatClient {
             statServiceResponse = rest.exchange(path, HttpMethod.POST, requestEntity, StatRecordDto.class);
 
             if (statServiceResponse.getStatusCode().is2xxSuccessful()) {
-                return statServiceResponse;
+                return statServiceResponse; // разобраться
             }
 
-            return statServiceResponse;
+            return statServiceResponse; // разобраться
 
         } catch (HttpStatusCodeException e) {
 

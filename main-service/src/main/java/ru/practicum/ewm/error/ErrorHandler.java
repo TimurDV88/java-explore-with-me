@@ -18,7 +18,7 @@ public class ErrorHandler {
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
 
         log.error(e.getMessage());
-        return new ErrorResponse(e.getMessage(), e.getCause().getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
@@ -26,7 +26,7 @@ public class ErrorHandler {
     public ErrorResponse handleIncorrectException(final IncorrectRequestException e) {
 
         log.error(e.getMessage());
-        return new ErrorResponse(e.getMessage(), e.getCause().getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
@@ -34,7 +34,7 @@ public class ErrorHandler {
     public ErrorResponse handleConflictException(final ConflictOnRequestException e) {
 
         log.error(e.getMessage());
-        return new ErrorResponse(e.getMessage(), e.getCause().getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
 }

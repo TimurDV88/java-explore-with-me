@@ -3,9 +3,11 @@ package ru.practicum.ewm.event.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.StatClientService;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.dto.EventFullDto;
@@ -17,7 +19,6 @@ import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,10 +26,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventPublicService {
 
+    @Value("${app-name}")
+    private String appName;
+
+    private final StatClientService statClientService;
+
     private final EventRepository eventRepository;
 
-    public List<EventShortDto> getByParameters(String text,
-                                               Integer[] categories,
+    public List<EventShortDto> getByParameters(String uri, String ip,
+
+                                               String text,
+                                               Long[] categories,
                                                Boolean paid,
                                                String rangeStart,
                                                String rangeEnd,
@@ -37,7 +45,12 @@ public class EventPublicService {
                                                int from,
                                                int size) {
 
-        log.info("-- Возвращение событиий по условиям поиска");
+        log.info("-- Возвращение событиий с параметрами (Public): " +
+                        "text={}, categories={}, paid={}, start={}, end={}, onlyAvailable={}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
+
+        // отправляем запись о запросе в сервис статистики
+        statClientService.addStatRecord(appName, uri, ip);
 
         // блок пагинации
         PageRequest pageRequest;
@@ -54,21 +67,35 @@ public class EventPublicService {
             throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
         }
 
+        // Блок проверки опубликованности
+        BooleanExpression byState = QEvent.event.state.eq(EventState.PUBLISHED.toString());
+
+        // Блок поиска:
+
         // text
-        BooleanExpression byText =
-                QEvent.event.annotation.toLowerCase().eq(text.toLowerCase())
-                        .or(QEvent.event.description.toLowerCase().eq(text.toLowerCase()));
+        BooleanExpression byText;
+        if (text != null) {
+            byText = QEvent.event.annotation.containsIgnoreCase(text)
+                    .or(QEvent.event.description.containsIgnoreCase(text));
+        } else {
+            byText = null;
+        }
 
         // категории
         BooleanExpression byCategory;
         if (categories != null) {
             byCategory = QEvent.event.category.id.in(categories);
         } else {
-            byCategory = QEvent.event.isNotNull();
+            byCategory = null;
         }
 
         // платность
-        BooleanExpression byPaid = QEvent.event.paid.eq(paid);
+        BooleanExpression byPaid;
+        if (paid != null) {
+            byPaid = QEvent.event.paid.eq(paid);
+        } else {
+            byPaid = null;
+        }
 
         // блок старт
         BooleanExpression byStart;
@@ -85,60 +112,59 @@ public class EventPublicService {
         if (rangeEnd != null) {
             byEnd = QEvent.event.eventDate.after(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
         } else {
-            byEnd = QEvent.event.isNotNull();
+            byEnd = null;
         }
 
         // блок доступность
         BooleanExpression byAvailable;
-        if (onlyAvailable) {
+        if (onlyAvailable != null && onlyAvailable) {
             byAvailable = QEvent.event.confirmedRequests.lt(QEvent.event.participantLimit);
         } else {
-            byAvailable = QEvent.event.isNotNull();
+            byAvailable = null;
         }
-
-        // блок проверки опубликованности
-        BooleanExpression byState = QEvent.event.state.eq(EventState.PUBLISHED);
 
         // запрос в бд через QDSL
-        Iterable<Event> foundEvents = eventRepository.findAll(byText
+        Iterable<Event> foundEvents = eventRepository.findAll(byState
 
-                        .and(byCategory)
-                        .and(byPaid)
-                        .and(byStart)
-                        .and(byEnd)
-                        .and(byAvailable)
-                        .and(byState),
+                .and(byText)
+                .and(byCategory)
+                .and(byPaid)
+                .and(byStart)
+                .and(byEnd)
+                .and(byAvailable));
 
-                pageRequest);
+        //pageRequest);
 
         // отметка просмотров событий в бд
-        List<Long> foundIds = new ArrayList<>();
-        for (Event event : foundEvents) {
-            foundIds.add(event.getId());
-        }
-        eventRepository.updateViewsByIds(foundIds);
+/*        for (Event event : foundEvents) {
+            event.setViews(event.getViews() + 1);
+        }*/
 
         // маппинг для возврата полученного списка
         List<EventShortDto> listToReturn = EventMapper.eventToShortDto(foundEvents);
 
-        log.info("--- Список событий возвращен, его размер: {}", listToReturn.size());
+        log.info("-- Список событий (Public) возвращен, его размер: {}", listToReturn.size());
 
         return listToReturn;
     }
 
-    public EventFullDto getById(Long eventId) {
+    public EventFullDto getById(Long eventId, String uri, String ip) {
 
-        log.info("-- Возвращение события id={}", eventId);
+        log.info("-- Возвращение события id={} (Public)", eventId);
 
-        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED).orElseThrow(() ->
-                new NotFoundException("- Событие с id=" + eventId + " не найдено или не опубликовано"));
+        // отправляем запись о запросе в сервис статистики
+        statClientService.addStatRecord(appName, uri, ip);
+
+        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED.toString()).orElseThrow(() ->
+                new NotFoundException("- Событие с id=" + eventId + " не найдено или не опубликовано (Public)"));
 
         // отметка просмотров события в бд
-        eventRepository.updateViewsByIds(List.of(eventId));
+        Integer views = statClientService.getViewsByUri(appName, uri);
+        event.setViews(views);
 
         EventFullDto eventFullDto = EventMapper.eventToFullDto(event);
 
-        log.info("-- Событие с id={} возвращёно", eventId);
+        log.info("-- Событие с id={} возвращёно (Public)", eventId);
 
         return eventFullDto;
     }

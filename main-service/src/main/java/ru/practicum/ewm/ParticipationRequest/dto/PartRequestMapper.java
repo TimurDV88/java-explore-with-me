@@ -1,5 +1,6 @@
 package ru.practicum.ewm.ParticipationRequest.dto;
 
+import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
 import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class PartRequestMapper {
         participationRequest.setCreated(partRequestDto.getCreated());
         participationRequest.setEventId(partRequestDto.getEventId());
         participationRequest.setRequesterId(partRequestDto.getRequesterId());
-        participationRequest.setState(partRequestDto.getState());
+        participationRequest.setState(partRequestDto.getState().toString());
 
         return participationRequest;
     }
@@ -22,10 +23,11 @@ public class PartRequestMapper {
     public static PartRequestDto partRequestToDto(ParticipationRequest participationRequest) {
 
         return new PartRequestDto(
+                participationRequest.getId(),
                 participationRequest.getCreated(),
                 participationRequest.getEventId(),
                 participationRequest.getRequesterId(),
-                participationRequest.getState());
+                PartRequestState.valueOf(participationRequest.getState()));
     }
 
     public static List<PartRequestDto> partRequestToDto(List<ParticipationRequest> requests) {

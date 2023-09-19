@@ -15,7 +15,7 @@ public class EventFullDto {
 
     private final String annotation;
 
-    private final CategoryDto categoryDto;
+    private final CategoryDto category;
 
     private final Integer confirmedRequests;
 
@@ -42,4 +42,24 @@ public class EventFullDto {
     private final String title;
 
     private final Integer views;
+
+    @Override
+    public String toString() {
+        return "EventFullDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", category=" + category +
+                ", confirmedRequests=" + confirmedRequests +
+                ", createdOn=" + createdOn +
+                ", eventDate=" + eventDate +
+                ", initiator=" + initiator +
+                ", location=" + location +
+                ", paid=" + paid +
+                ", participantLimit=" + participantLimit +
+                ", publishedOn=" + publishedOn +
+                ", requestModeration=" + requestModeration +
+                ", state=" + state +
+                ", views=" + views +
+                '}';
+    }
 }

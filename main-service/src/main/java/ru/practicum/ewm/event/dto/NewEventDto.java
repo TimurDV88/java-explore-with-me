@@ -33,4 +33,17 @@ public class NewEventDto {
     @NotNull
     @NotBlank
     private final String title;
+
+    @Override
+    public String toString() {
+        return "NewEventDto{" +
+                "title='" + title + '\'' +
+                ", category=" + category +
+                ", eventDate='" + eventDate + '\'' +
+                ", location=" + location +
+                ", paid=" + paid +
+                ", participantLimit=" + participantLimit +
+                ", requestModeration=" + requestModeration +
+                '}';
+    }
 }

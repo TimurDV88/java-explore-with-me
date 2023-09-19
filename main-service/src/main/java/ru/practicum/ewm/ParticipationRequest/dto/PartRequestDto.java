@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Data
 public class PartRequestDto {
 
+    private final Long id;
+
     private final LocalDateTime created;
 
     private final Long eventId;

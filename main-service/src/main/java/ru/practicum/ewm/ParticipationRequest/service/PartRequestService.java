@@ -42,9 +42,9 @@ public class PartRequestService {
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
 
         //блок проверок
-        if (partRequestRepository.existsByEventId(eventId)) {
-            throw new ConflictOnRequestException("- Запрос польщователя id=" + requesterId +
-                    "на участие в этом событии уже существует");
+        if (partRequestRepository.existsByRequesterIdAndEventId(requesterId, eventId)) {
+            throw new ConflictOnRequestException("- Запрос пользователя id=" + requesterId +
+                    " на участие в этом событии уже существует");
         }
 
         if (event.getInitiator().getId().equals(requesterId)) {
@@ -52,7 +52,7 @@ public class PartRequestService {
                     "в своем событии");
         }
 
-        if (!event.getState().equals(EventState.PUBLISHED)) {
+        if (!event.getState().equals(EventState.PUBLISHED.toString())) {
             throw new ConflictOnRequestException("- Нельзя участвовать в неопубликованном событии");
         }
 
@@ -69,9 +69,9 @@ public class PartRequestService {
         participationRequest.setRequesterId(requesterId);
 
         if (!event.getRequestModeration()) {
-            participationRequest.setState(PartRequestState.CONFIRMED);
+            participationRequest.setState(PartRequestState.CONFIRMED.toString());
         } else {
-            participationRequest.setState(PartRequestState.WAITING);
+            participationRequest.setState(PartRequestState.WAITING.toString());
         }
 
         PartRequestDto partRequestDto =
@@ -121,7 +121,7 @@ public class PartRequestService {
         }
         //конец блока проверок
 
-        request.setState(PartRequestState.CANCELED);
+        request.setState(PartRequestState.CANCELED.toString());
 
         PartRequestDto requestDto = PartRequestMapper.partRequestToDto(partRequestRepository.save(request));
 

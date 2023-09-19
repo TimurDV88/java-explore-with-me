@@ -3,7 +3,6 @@ package ru.practicum.ewm.event.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.user.model.User;
 
@@ -60,7 +59,7 @@ public class Event {
     private Boolean requestModeration;
 
     @Column(name = "state")
-    private EventState state;
+    private String state;
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;

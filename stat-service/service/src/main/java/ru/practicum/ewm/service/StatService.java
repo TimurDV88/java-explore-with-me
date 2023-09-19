@@ -13,6 +13,7 @@ import ru.practicum.ewm.repository.StatRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,7 +26,6 @@ import java.util.List;
 public class StatService {
 
     private final StatRepository statRepository;
-    //private static final String APP_NAME = "ewm-main-service";
 
     public StatRecordDto add(NewStatDto newStatDto) {
 
@@ -52,23 +52,34 @@ public class StatService {
                 unique
         );
 
-        List<StatDtoToReturn> listToReturn = new ArrayList<>();
+        if (appName == null || !statRepository.existsByApp(appName)) {
+            log.info("- Данное имя 'app' отсутсвует в базе статистики: {}", appName);
+            return List.of();
+        }
 
-        start = java.net.URLDecoder.decode(start, StandardCharsets.UTF_8);
-        end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
+        LocalDateTime startTime;
+        LocalDateTime endTime;
 
-        LocalDateTime startTime =
-                LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
-        LocalDateTime endTime =
-                LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
+        try {
 
-        int hits;
+            start = java.net.URLDecoder.decode(start, StandardCharsets.UTF_8);
+            startTime = LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
+
+            end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
+            endTime = LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
+
+        } catch (DateTimeParseException e) {
+
+            startTime = LocalDateTime.now().minusYears(10);
+            endTime = LocalDateTime.now().plusYears(10);
+        }
 
         if (uris == null) {
-
             uris = statRepository.listOfAllUris(appName, startTime, endTime).toArray((new String[0]));
-
         }
+
+        List<StatDtoToReturn> listToReturn = new ArrayList<>();
+        int hits;
 
         for (String uri : uris) {
 
