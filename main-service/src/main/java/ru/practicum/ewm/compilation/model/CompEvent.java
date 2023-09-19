@@ -3,7 +3,6 @@ package ru.practicum.ewm.compilation.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.event.model.Event;
 
 import javax.persistence.*;
 

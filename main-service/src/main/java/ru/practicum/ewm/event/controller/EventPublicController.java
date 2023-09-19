@@ -1,9 +1,7 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.StatClientService;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventPublicService;
@@ -16,11 +14,7 @@ import java.util.List;
 @RequestMapping(path = "/events")
 public class EventPublicController {
 
-
-
     private final EventPublicService eventPublicService;
-
-
 
     @GetMapping
     public List<EventShortDto> getByParameters(
@@ -56,7 +50,7 @@ public class EventPublicController {
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getById(@PathVariable (value = "id") Long eventId, HttpServletRequest request) {
+    public EventFullDto getById(@PathVariable(value = "id") Long eventId, HttpServletRequest request) {
 
         String uri = request.getRequestURI();
         String ip = request.getRemoteAddr();
