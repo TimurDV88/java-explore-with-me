@@ -42,7 +42,7 @@ public class PartRequestService {
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
 
         //блок проверок
-        if (partRequestRepository.existsByRequesterIdAndEventId(requesterId, eventId)) {
+        if (partRequestRepository.existsByRequesterAndEvent(requesterId, eventId)) {
             throw new ConflictOnRequestException("- Запрос пользователя id=" + requesterId +
                     " на участие в этом событии уже существует");
         }
@@ -56,7 +56,10 @@ public class PartRequestService {
             throw new ConflictOnRequestException("- Нельзя участвовать в неопубликованном событии");
         }
 
-        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+        Integer confRequests = event.getConfirmedRequests();
+        Integer partLimit = event.getParticipantLimit();
+        if (confRequests != null && partLimit != null && partLimit != 0
+                && confRequests >= event.getParticipantLimit()) {
             throw new ConflictOnRequestException("- Достигнут лимит запросов на участие в событии");
         }
         // конец блока проверок
@@ -65,19 +68,20 @@ public class PartRequestService {
         ParticipationRequest participationRequest = new ParticipationRequest();
 
         participationRequest.setCreated(LocalDateTime.now());
-        participationRequest.setEventId(eventId);
-        participationRequest.setRequesterId(requesterId);
+        participationRequest.setEvent(eventId);
+        participationRequest.setRequester(requesterId);
 
-        if (!event.getRequestModeration()) {
-            participationRequest.setState(PartRequestState.CONFIRMED.toString());
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
+            participationRequest.setStatus(PartRequestState.CONFIRMED.toString());
         } else {
-            participationRequest.setState(PartRequestState.WAITING.toString());
+            participationRequest.setStatus(PartRequestState.WAITING.toString());
         }
 
         PartRequestDto partRequestDto =
                 PartRequestMapper.partRequestToDto(partRequestRepository.save(participationRequest));
 
-        log.info("-- Запрос от пользователя id={} на участие в событии id={} добавлен", requesterId, eventId);
+        log.info("-- Запрос от пользователя id={} на участие в событии id={} добавлен: {}",
+                requesterId, eventId, partRequestDto);
 
         return partRequestDto;
     }
@@ -91,7 +95,7 @@ public class PartRequestService {
             throw new NotFoundException("- Пользователь с id=" + requesterId + " не найден");
         }
 
-        List<PartRequestDto> listToReturn = partRequestRepository.findByRequesterId(requesterId)
+        List<PartRequestDto> listToReturn = partRequestRepository.findByRequester(requesterId)
                 .stream()
                 .map(PartRequestMapper::partRequestToDto)
                 .collect(Collectors.toList());
@@ -115,13 +119,13 @@ public class PartRequestService {
             throw new NotFoundException("- Пользователь с id=" + requesterId + " не найден");
         }
 
-        if (!request.getRequesterId().equals(requesterId)) {
+        if (!request.getRequester().equals(requesterId)) {
             throw new IncorrectRequestException("- Пользователь с id=" + requesterId +
                     " не создавал запрос c id=" + requestId);
         }
         //конец блока проверок
 
-        request.setState(PartRequestState.CANCELED.toString());
+        request.setStatus(PartRequestState.CANCELED.toString());
 
         PartRequestDto requestDto = PartRequestMapper.partRequestToDto(partRequestRepository.save(request));
 

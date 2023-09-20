@@ -9,19 +9,19 @@ import java.util.List;
 
 public interface PartRequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
-    boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);
+    boolean existsByRequesterAndEvent(Long requesterId, Long eventId);
 
-    List<ParticipationRequest> findByRequesterId(Long requesterId);
+    List<ParticipationRequest> findByRequester(Long requesterId);
 
-    List<ParticipationRequest> findByEventId(Long eventId);
+    List<ParticipationRequest> findByEvent(Long eventId);
 
     List<ParticipationRequest> findByIdIn(List<Long> ids);
 
     @Modifying
     @Query(value = "UPDATE ParticipationRequest " +
-            "SET state = :state " +
+            "SET status = :status " +
             "WHERE id IN (:ids)")
-    void setStatus(List<Long> ids, String state);
+    void setStatus(List<Long> ids, String status);
 
-    List<ParticipationRequest> findByEventIdAndIdIn(Long eventId, List<Long> ids);
+    List<ParticipationRequest> findByEventAndIdIn(Long eventId, List<Long> ids);
 }

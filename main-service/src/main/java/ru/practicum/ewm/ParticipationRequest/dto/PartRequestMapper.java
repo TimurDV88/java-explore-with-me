@@ -13,9 +13,9 @@ public class PartRequestMapper {
         ParticipationRequest participationRequest = new ParticipationRequest();
 
         participationRequest.setCreated(partRequestDto.getCreated());
-        participationRequest.setEventId(partRequestDto.getEventId());
-        participationRequest.setRequesterId(partRequestDto.getRequesterId());
-        participationRequest.setState(partRequestDto.getState().toString());
+        participationRequest.setEvent(partRequestDto.getEvent());
+        participationRequest.setRequester(partRequestDto.getRequester());
+        participationRequest.setStatus(partRequestDto.getStatus().toString());
 
         return participationRequest;
     }
@@ -25,9 +25,9 @@ public class PartRequestMapper {
         return new PartRequestDto(
                 participationRequest.getId(),
                 participationRequest.getCreated(),
-                participationRequest.getEventId(),
-                participationRequest.getRequesterId(),
-                PartRequestState.valueOf(participationRequest.getState()));
+                participationRequest.getEvent(),
+                participationRequest.getRequester(),
+                PartRequestState.valueOf(participationRequest.getStatus()));
     }
 
     public static List<PartRequestDto> partRequestToDto(List<ParticipationRequest> requests) {

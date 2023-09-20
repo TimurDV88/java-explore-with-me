@@ -32,8 +32,21 @@ public class CompilationAdminService {
 
         log.info("-- Добавление подборки событий: {}", newCompilationDto);
 
-        Compilation compilation = CompMapper.newCompDtoToCompilation(newCompilationDto);
-        Long compId = compilationRepository.save(compilation).getId();
+        // создаём Compilation
+        Compilation compilation = new Compilation();
+
+        if (newCompilationDto.getPinned() != null) {
+            compilation.setPinned(newCompilationDto.getPinned());
+        } else {
+            compilation.setPinned(false);
+        }
+
+        compilation.setTitle(newCompilationDto.getTitle());
+
+        compilation = compilationRepository.save(compilation);
+
+        // создаём compEventList
+        Long compId = compilation.getId();
 
         Long[] eventIds = new Long[]{};
         if (newCompilationDto.getEvents() != null) {
@@ -50,16 +63,17 @@ public class CompilationAdminService {
             compEvent.setEventId(eventId);
             compEventList.add(compEvent);
         }
+
         // сохраняем список compEvent-ов в репозиторий
         compEventRepository.saveAll(compEventList);
 
         // получаем список EventShortDto
-        List<EventShortDto> eventShortDtos = EventMapper.eventToShortDto(eventRepository.findAllByIdIn(eventIds));
+        List<EventShortDto> eventShortDtoList = EventMapper.eventToShortDto(eventRepository.findAllByIdIn(eventIds));
 
-        CompilationDto result = CompMapper.compilationToDto(compilation, eventShortDtos);
+        CompilationDto result = CompMapper.compilationToDto(compilation, eventShortDtoList);
 
         log.info("-- Подборка событий добавлена: id={}, title={}, размер={}",
-                compId, result.getTitle(), eventShortDtos.size());
+                compId, result.getTitle(), eventShortDtoList.size());
 
         return result;
     }

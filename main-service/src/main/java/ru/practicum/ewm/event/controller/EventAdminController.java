@@ -3,10 +3,10 @@ package ru.practicum.ewm.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.event.service.EventAdminService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,7 +17,7 @@ public class EventAdminController {
     private final EventAdminService eventAdminService;
 
     @GetMapping
-    public List<EventShortDto> getEventsByParams(
+    public List<EventFullDto> getEventsByParams(
 
             @RequestParam(value = "users", required = false) Long[] users,
             @RequestParam(value = "states", required = false) String[] states,
@@ -40,7 +40,7 @@ public class EventAdminController {
 
     @PatchMapping("/{id}")
     public EventFullDto updateEventByAdmin(@PathVariable(value = "id") Long eventId,
-                                           @RequestBody UpdateEventAdminRequest updateRequest) {
+                                           @RequestBody @Valid UpdateEventAdminRequest updateRequest) {
 
         return eventAdminService.updateEventByAdmin(eventId, updateRequest);
     }

@@ -46,10 +46,11 @@ public class UserAdminService {
         }
     }
 
-    public List<UserFullDto> get(Long[] userIds, int from, int size) {
+    public List<UserFullDto> getByParams(Long[] userIds, int from, int size) {
 
         log.info("-- Возвращение пользователей с номерами:{}", Arrays.toString(userIds));
 
+        // блок пагинации
         PageRequest pageRequest;
 
         if (size > 0 && from >= 0) {
@@ -59,7 +60,14 @@ public class UserAdminService {
             throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
         }
 
-        List<UserFullDto> listToReturn = UserMapper.userToFullDto(userRepository.findByIdIn(userIds, pageRequest));
+        List<UserFullDto> listToReturn;
+
+        // блок проверки userIds
+        if (userIds == null) {
+            listToReturn = UserMapper.userToFullDto(userRepository.findAll(pageRequest));
+        } else {
+            listToReturn = UserMapper.userToFullDto(userRepository.findByIdIn(userIds, pageRequest));
+        }
 
         log.info("-- Список пользователей возвращен, его размер: {}", listToReturn.size());
 

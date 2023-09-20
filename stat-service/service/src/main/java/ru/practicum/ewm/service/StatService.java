@@ -85,6 +85,7 @@ public class StatService {
 
             if (unique) {
                 hits = statRepository.sizeOfUniqueIpRecordsListByUri(appName, startTime, endTime, uri);
+
             } else {
                 hits = statRepository.sizeOfAllRecordsListByUri(appName, startTime, endTime, uri);
             }

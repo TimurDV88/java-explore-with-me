@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.ParticipationRequest.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.ParticipationRequest.dto.EventRequestStatusUpdateResult;
@@ -23,6 +24,7 @@ public class EventPrivateController {
 
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto add(@PathVariable(value = "userId") Long initiatorId,
                             @RequestBody @Valid NewEventDto newEventDto) {
 
@@ -47,7 +49,7 @@ public class EventPrivateController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventByInitiator(@PathVariable(value = "userId") Long initiatorId,
                                                @PathVariable(value = "eventId") Long eventId,
-                                               @RequestBody UpdateEventUserRequest updateRequest) {
+                                               @RequestBody @Valid UpdateEventUserRequest updateRequest) {
 
         return eventPrivateService.updateEventByInitiator(initiatorId, eventId, updateRequest);
     }

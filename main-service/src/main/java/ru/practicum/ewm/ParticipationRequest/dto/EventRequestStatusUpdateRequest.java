@@ -10,6 +10,6 @@ public class EventRequestStatusUpdateRequest {
 
     private List<Long> requestIds;
 
-    private PartRequestUpdateState partRequestState;
+    private PartRequestUpdateState status;
 
 }

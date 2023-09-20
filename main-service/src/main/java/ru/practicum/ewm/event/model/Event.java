@@ -47,7 +47,7 @@ public class Event {
     private Location location;
 
     @Column(name = "paid", nullable = false)
-    private boolean paid;
+    private Boolean paid;
 
     @Column(name = "participant_limit")
     private Integer participantLimit;

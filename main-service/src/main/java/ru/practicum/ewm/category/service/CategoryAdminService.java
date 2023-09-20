@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.CategoryMapper;
+import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.error.exception.NotFoundException;
@@ -16,11 +17,11 @@ public class CategoryAdminService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryDto add(CategoryDto categoryDto) {
+    public CategoryDto add(NewCategoryDto newCategoryDto) {
 
-        log.info("-- Сохранение категории: {}", categoryDto);
+        log.info("-- Сохранение категории: {}", newCategoryDto);
 
-        Category category = CategoryMapper.categoryDtoToModel(categoryDto);
+        Category category = CategoryMapper.newCategoryDtoToModel(newCategoryDto);
 
         category = categoryRepository.save(category);
 

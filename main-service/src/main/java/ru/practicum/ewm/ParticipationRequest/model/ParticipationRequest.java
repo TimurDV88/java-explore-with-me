@@ -21,12 +21,12 @@ public class ParticipationRequest {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @Column(name = "event_id", nullable = false)
-    private Long eventId;
+    @Column(name = "event", nullable = false)
+    private Long event;
 
-    @Column(name = "requester_id", nullable = false)
-    private Long requesterId;
+    @Column(name = "requester", nullable = false)
+    private Long requester;
 
-    @Column(name = "state")
-    private String state;
+    @Column(name = "status")
+    private String status;
 }

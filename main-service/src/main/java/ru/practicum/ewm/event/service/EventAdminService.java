@@ -13,7 +13,6 @@ import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventMapper;
-import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
@@ -22,6 +21,8 @@ import ru.practicum.ewm.event.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.practicum.ewm.event.dto.EventMapper.DATE_TIME_FORMATTER;
 
 @Service
 @Slf4j
@@ -32,17 +33,19 @@ public class EventAdminService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<EventShortDto> getByParams(Long[] users,
-                                           String[] states,
-                                           Long[] categories,
-                                           String rangeStart,
-                                           String rangeEnd,
-                                           int from,
-                                           int size) {
+    public List<EventFullDto> getByParams(Long[] users,
+                                          String[] states,
+                                          Long[] categories,
+                                          String rangeStart,
+                                          String rangeEnd,
+                                          int from,
+                                          int size) {
 
-        log.info("-- Возвращение событий с параметрами (Admin): users={}, states={}, categories={}, start={}, end={}",
-                users, states, categories, rangeStart, rangeEnd);
+        log.info("-- Возвращение событий с параметрами (Admin): users={}, states={}, " +
+                        "categories={}, start={}, end={}, from={}, size={}",
+                users, states, categories, rangeStart, rangeEnd, from, size);
 
+        // блок пагинации
         PageRequest pageRequest;
 
         if (size > 0 && from >= 0) {
@@ -80,7 +83,7 @@ public class EventAdminService {
         BooleanExpression byStart;
         LocalDateTime rangeStartDate;
         if (rangeStart != null) {
-            rangeStartDate = LocalDateTime.parse(rangeStart, EventMapper.DATE_TIME_FORMATTER);
+            rangeStartDate = LocalDateTime.parse(rangeStart, DATE_TIME_FORMATTER);
         } else {
             rangeStartDate = LocalDateTime.now();
         }
@@ -89,7 +92,7 @@ public class EventAdminService {
         // блок энд
         BooleanExpression byEnd;
         if (rangeEnd != null) {
-            byEnd = QEvent.event.eventDate.before(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
+            byEnd = QEvent.event.eventDate.before(LocalDateTime.parse(rangeEnd, DATE_TIME_FORMATTER));
         } else {
             byEnd = null;
         }
@@ -97,15 +100,15 @@ public class EventAdminService {
         // запрос в бд через QDSL
         Iterable<Event> foundEvents = eventRepository.findAll(byUsers
 
-                .and(byStates)
-                .and(byCategory)
-                .and(byStart)
-                .and(byEnd));
+                        .and(byStates)
+                        .and(byCategory)
+                        .and(byStart)
+                        .and(byEnd),
 
-        //pageRequest);
+                pageRequest);
 
         // маппинг для возврата полученного списка
-        List<EventShortDto> listToReturn = EventMapper.eventToShortDto(foundEvents);
+        List<EventFullDto> listToReturn = EventMapper.eventToFullDto(foundEvents);
 
         log.info("-- Список событий (Admin) возвращён, его размер: {}", listToReturn.size());
 
@@ -114,7 +117,7 @@ public class EventAdminService {
 
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
 
-        log.info("-- Обновление события id={} от admin: {}", eventId, updateRequest);
+        log.info("-- Обновление события id={} (Admin): {}", eventId, updateRequest);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
@@ -136,7 +139,16 @@ public class EventAdminService {
         }
 
         EventMapper.setIfNotNull(event::setDescription, updateRequest.getDescription());
-        EventMapper.setIfNotNull(event::setEventDate, updateRequest.getEventDate());
+
+        if (updateRequest.getEventDate() != null) {
+            LocalDateTime newEventDate = LocalDateTime.parse(updateRequest.getEventDate(), DATE_TIME_FORMATTER);
+            if (newEventDate.isBefore(LocalDateTime.now())) {
+                throw new IncorrectRequestException("- Нельзя менять дату на более раннюю, чем текущее время");
+            } else {
+                event.setEventDate(newEventDate);
+            }
+        }
+
         EventMapper.setIfNotNull(event::setLocation, updateRequest.getLocation());
         EventMapper.setIfNotNull(event::setPaid, updateRequest.getPaid());
         EventMapper.setIfNotNull(event::setParticipantLimit, updateRequest.getParticipantLimit());
@@ -153,9 +165,9 @@ public class EventAdminService {
 
         EventMapper.setIfNotNull(event::setTitle, updateRequest.getTitle());
 
-        EventFullDto eventFullDto = EventMapper.eventToFullDto(event); //eventRepository.save(event)); - не нужно
+        EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event));
 
-        log.info("-- Событие id={} от admin обновлено", eventId);
+        log.info("-- Событие обновлено (Admin): {}", eventFullDto);
 
         return eventFullDto;
     }

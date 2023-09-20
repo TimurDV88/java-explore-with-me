@@ -2,6 +2,8 @@ package ru.practicum.ewm.compilation.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.compilation.dto.CompMapper;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
@@ -9,6 +11,7 @@ import ru.practicum.ewm.compilation.model.CompEvent;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.compilation.repository.CompEventRepository;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
+import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.dto.EventMapper;
 import ru.practicum.ewm.event.dto.EventShortDto;
@@ -49,11 +52,21 @@ public class CompilationPublicService {
         log.info("-- Возвращение подборок с параметрами (Public): pinned={}, from={}, size={}",
                 pinned, from, size);
 
-        List<Compilation> compilationList;
-        if (pinned != null) {
-            compilationList = compilationRepository.findAllByPinned(pinned);
+        // блок пагинации
+        PageRequest pageRequest;
+
+        if (size > 0 && from >= 0) {
+            int page = from / size;
+            pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
         } else {
-            compilationList = compilationRepository.findAll();
+            throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
+        }
+
+        Iterable<Compilation> compilationList;
+        if (pinned != null) {
+            compilationList = compilationRepository.findByPinned(pinned, pageRequest);
+        } else {
+            compilationList = compilationRepository.findAll(pageRequest);
         }
 
         List<CompilationDto> resultList = new ArrayList<>();

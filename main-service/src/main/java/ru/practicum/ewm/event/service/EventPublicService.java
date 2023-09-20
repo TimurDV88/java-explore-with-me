@@ -46,19 +46,37 @@ public class EventPublicService {
                                                int size) {
 
         log.info("-- Возвращение событиий с параметрами (Public): " +
-                        "text={}, categories={}, paid={}, start={}, end={}, onlyAvailable={}",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
+                        "text={}, categories={}, paid={}, start={}, end={}, onlyAvailable={}, from={}, size={}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
+
+        // блок проверок:
+
+        // start end
+        LocalDateTime rangeStartDate;
+        LocalDateTime rangeEndDate;
+        if (rangeStart != null && rangeEnd != null) {
+            rangeStartDate = LocalDateTime.parse(rangeStart, EventMapper.DATE_TIME_FORMATTER);
+            rangeEndDate = LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER);
+            if (rangeEndDate.isBefore(rangeStartDate)) {
+                throw new IncorrectRequestException("- start должен быть раньше end");
+            }
+        }
+
+        // sort
+        if (sort.equalsIgnoreCase("EVENT_DATE")) {
+            sort = "eventDate";
+        } else if (sort.equalsIgnoreCase("VIEWS")) {
+            sort = "views";
+        } else {
+            throw new IncorrectRequestException("- sort должен быть EVENT_DATE или VIEWS");
+        }
+        // конец блока проверок
 
         // отправляем запись о запросе в сервис статистики
         statClientService.addStatRecord(appName, uri, ip);
 
         // блок пагинации
         PageRequest pageRequest;
-
-        if (!sort.equalsIgnoreCase("EVENT_DATE")
-                && !sort.equalsIgnoreCase("VIEWS")) {
-            throw new IncorrectRequestException("- sort должен быть EVENT_DATE или VIEWS");
-        }
 
         if (size > 0 && from >= 0) {
             int page = from / size;
@@ -97,9 +115,8 @@ public class EventPublicService {
             byPaid = null;
         }
 
-        // блок старт
+        // старт
         BooleanExpression byStart;
-        LocalDateTime rangeStartDate;
         if (rangeStart != null) {
             rangeStartDate = LocalDateTime.parse(rangeStart, EventMapper.DATE_TIME_FORMATTER);
         } else {
@@ -107,7 +124,7 @@ public class EventPublicService {
         }
         byStart = QEvent.event.eventDate.after(rangeStartDate);
 
-        // блок энд
+        // энд
         BooleanExpression byEnd;
         if (rangeEnd != null) {
             byEnd = QEvent.event.eventDate.after(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
@@ -115,7 +132,7 @@ public class EventPublicService {
             byEnd = null;
         }
 
-        // блок доступность
+        // доступность
         BooleanExpression byAvailable;
         if (onlyAvailable != null && onlyAvailable) {
             byAvailable = QEvent.event.confirmedRequests.lt(QEvent.event.participantLimit);
@@ -126,14 +143,14 @@ public class EventPublicService {
         // запрос в бд через QDSL
         Iterable<Event> foundEvents = eventRepository.findAll(byState
 
-                .and(byText)
-                .and(byCategory)
-                .and(byPaid)
-                .and(byStart)
-                .and(byEnd)
-                .and(byAvailable));
+                        .and(byText)
+                        .and(byCategory)
+                        .and(byPaid)
+                        .and(byStart)
+                        .and(byEnd)
+                        .and(byAvailable),
 
-        //pageRequest);
+                pageRequest);
 
         // отметка просмотров событий в бд
 /*        for (Event event : foundEvents) {

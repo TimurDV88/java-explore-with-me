@@ -15,6 +15,7 @@ import ru.practicum.ewm.ParticipationRequest.model.PartRequestUpdateState;
 import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.category.controller.CategoryAdminController;
 import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.event.controller.EventAdminController;
 import ru.practicum.ewm.event.controller.EventPrivateController;
 import ru.practicum.ewm.event.dto.*;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.practicum.ewm.event.dto.UpdateEventAdminRequest.StateAction.PUBLISH_EVENT;
 
 @Transactional
 @SpringBootTest(
@@ -57,7 +59,7 @@ class EventServiceTest {
         userFullDto = userAdminController.add(new NewUserDto("user_name", "email@email.com"));
 
         String annotation = "annotation_field";
-        Long category = categoryAdminController.add(new CategoryDto(null, "category_name")).getId();
+        Long category = categoryAdminController.add(new NewCategoryDto(null, "category_name")).getId();
         String description = "description_field";
 
         String eventDate = LocalDateTime.now().plusDays(1).format(EventMapper.DATE_TIME_FORMATTER);
@@ -135,17 +137,18 @@ class EventServiceTest {
 
         assertEquals(EventState.PENDING, eventFullDto.getState());
 
-        UpdateEventAdminRequest updateEventAdminRequest = new UpdateEventAdminRequest();
-
         //set new title
         String newTitle = "newTitle";
+
+        UpdateEventAdminRequest updateEventAdminRequest = new UpdateEventAdminRequest();
+
         updateEventAdminRequest.setTitle(newTitle);
         eventAdminController.updateEventByAdmin(eventFullDto.getId(), updateEventAdminRequest);
         eventFullDto = eventPrivateController.getById(userFullDto.getId(), eventFullDto.getId());
         assertEquals(newTitle, eventFullDto.getTitle());
 
         //set to published
-        updateEventAdminRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateEventAdminRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventFullDto.getId(), updateEventAdminRequest);
         eventFullDto = eventPrivateController.getById(userFullDto.getId(), eventFullDto.getId());
         assertEquals(EventState.PUBLISHED, eventFullDto.getState());
@@ -163,7 +166,7 @@ class EventServiceTest {
         EventFullDto eventDto1 = eventPrivateController.add(userFullDto.getId(), newEventDto);
 
         // userIds = {1,99,199}
-        List<EventShortDto> list = eventAdminController.getEventsByParams(
+        List<EventFullDto> list = eventAdminController.getEventsByParams(
                 new Long[]{eventDto1.getInitiator().getId(), 99L, 199L},
                 null, null, null, null, 0, 10);
         assertEquals(1, list.size());
@@ -185,7 +188,7 @@ class EventServiceTest {
 
         // PUBLISH_EVENT and after state = PUBLISHED, result = 1
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventDto1.getId(), updateRequest);
 
         list = eventAdminController.getEventsByParams(
@@ -226,6 +229,20 @@ class EventServiceTest {
                 LocalDateTime.now().plusDays(5).format(EventMapper.DATE_TIME_FORMATTER),
                 0, 10);
         assertEquals(1, list.size());
+
+        // all params = null
+        list = eventAdminController.getEventsByParams(
+                null, null, null, null, null,
+                0, 10);
+        assertEquals(1, list.size());
+
+        // from
+        int from = 10;
+        list = eventAdminController.getEventsByParams(
+                null, null, null, null, null,
+                from,
+                10);
+        assertEquals(0, list.size());
     }
 
     /*
@@ -237,7 +254,7 @@ class EventServiceTest {
         EventFullDto eventFullDto = eventPrivateController.add(userFullDto.getId(), newEventDto);
 
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventFullDto.getId(), updateRequest);
 
         UserFullDto user2 = userAdminController.add(new NewUserDto("user 2", "email2@k.rt"));
@@ -247,7 +264,7 @@ class EventServiceTest {
         List<PartRequestDto> list = eventPrivateController.getRequests(userFullDto.getId(), eventFullDto.getId());
 
         assertEquals(1, list.size());
-        assertEquals(eventFullDto.getId(), list.get(0).getEventId());
+        assertEquals(eventFullDto.getId(), list.get(0).getEvent());
     }
 
     @Test
@@ -256,7 +273,7 @@ class EventServiceTest {
         EventFullDto eventFullDto = eventPrivateController.add(userFullDto.getId(), newEventDto);
 
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventFullDto.getId(), updateRequest);
 
         eventFullDto = eventPrivateController.getById(userFullDto.getId(), eventFullDto.getId());
@@ -270,19 +287,19 @@ class EventServiceTest {
         PartRequestDto partRequestDto2 =
                 PartRequestMapper.partRequestToDto(partRequestRepository.findById(partRequestDto.getId()).get());
         assertEquals(partRequestDto, partRequestDto2);
-        assertEquals(PartRequestState.WAITING, partRequestDto2.getState());
+        assertEquals(PartRequestState.WAITING, partRequestDto2.getStatus());
 
         // добавили новый запрос на участие от юзер3
         partRequestDto = partRequestController.add(user3.getId(), eventFullDto.getId());
         PartRequestDto partRequestDto3 =
                 PartRequestMapper.partRequestToDto(partRequestRepository.findById(partRequestDto.getId()).get());
         assertEquals(partRequestDto, partRequestDto3);
-        assertEquals(PartRequestState.WAITING, partRequestDto3.getState());
+        assertEquals(PartRequestState.WAITING, partRequestDto3.getStatus());
 
         // Обновили запрос на участие от юзер2 на CONFIRMED
         EventRequestStatusUpdateRequest statusUpdateRequest = new EventRequestStatusUpdateRequest();
         statusUpdateRequest.setRequestIds(List.of(partRequestDto2.getId()));
-        statusUpdateRequest.setPartRequestState(PartRequestUpdateState.CONFIRMED);
+        statusUpdateRequest.setStatus(PartRequestUpdateState.CONFIRMED);
 
         System.out.println("\n" +
                 statusUpdateRequest
@@ -293,11 +310,11 @@ class EventServiceTest {
 
         partRequestDto2 = PartRequestMapper
                 .partRequestToDto(partRequestRepository.findById(partRequestDto2.getId()).get());
-        assertEquals(PartRequestState.CONFIRMED, partRequestDto2.getState());
+        assertEquals(PartRequestState.CONFIRMED, partRequestDto2.getStatus());
 
         // Обновили запрос на участие от юзер3 на REJECTED
         statusUpdateRequest.setRequestIds(List.of(partRequestDto3.getId()));
-        statusUpdateRequest.setPartRequestState(PartRequestUpdateState.REJECTED);
+        statusUpdateRequest.setStatus(PartRequestUpdateState.REJECTED);
 
         System.out.println("\n" +
                 statusUpdateRequest
@@ -308,7 +325,7 @@ class EventServiceTest {
 
         partRequestDto3 = PartRequestMapper
                 .partRequestToDto(partRequestRepository.findById(partRequestDto3.getId()).get());
-        assertEquals(PartRequestState.REJECTED, partRequestDto3.getState());
+        assertEquals(PartRequestState.REJECTED, partRequestDto3.getStatus());
 
         // проверили обновление confirmedRequests у события
         eventFullDto = eventPrivateController.getById(userFullDto.getId(), eventFullDto.getId());
@@ -324,7 +341,7 @@ class EventServiceTest {
         EventFullDto eventDto1 = eventPrivateController.add(userFullDto.getId(), newEventDto);
 
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventDto1.getId(), updateRequest);
 
         Integer views = 0;
@@ -413,7 +430,7 @@ class EventServiceTest {
         EventFullDto eventDto1 = eventPrivateController.add(userFullDto.getId(), newEventDto);
 
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventDto1.getId(), updateRequest);
 
         // check event views

@@ -55,7 +55,7 @@ public class EventMapper {
                 event.getEventDate(),
                 UserMapper.userToShortDto(event.getInitiator()),
                 event.getLocation(),
-                event.isPaid(),
+                event.getPaid(),
                 event.getParticipantLimit(),
                 event.getPublishedOn(),
                 event.getRequestModeration(),
@@ -63,6 +63,17 @@ public class EventMapper {
                 event.getTitle(),
                 event.getViews()
         );
+    }
+
+    public static List<EventFullDto> eventToFullDto(Iterable<Event> events) {
+
+        List<EventFullDto> listToReturn = new ArrayList<>();
+
+        for (Event event : events) {
+            listToReturn.add(eventToFullDto(event));
+        }
+
+        return listToReturn;
     }
 
     public static EventShortDto eventToShortDto(Event event) {
@@ -74,7 +85,7 @@ public class EventMapper {
                 event.getConfirmedRequests(),
                 event.getEventDate(),
                 UserMapper.userToShortDto(event.getInitiator()),
-                event.isPaid(),
+                event.getPaid(),
                 event.getTitle(),
                 event.getViews()
         );
