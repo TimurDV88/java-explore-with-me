@@ -22,10 +22,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
 
     List<Event> findAllByIdIn(Long[] ids);
 
-    // похоже не нужен
+    boolean existsByCategoryId(Long categoryId);
+
     @Modifying
     @Query("UPDATE Event " +
-            "SET views = views + 1 " +
-            "WHERE id IN (:ids)")
-    void updateViewsByIds(List<Long> ids);
+            "SET confirmed_requests = confirmed_requests + 1 " +
+            "WHERE id = :id")
+    void updateConfirmedRequestsById(Long id);
 }

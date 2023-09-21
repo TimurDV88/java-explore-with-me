@@ -7,8 +7,10 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventPublicService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/events")

@@ -155,11 +155,32 @@ public class EventAdminService {
         EventMapper.setIfNotNull(event::setRequestModeration, updateRequest.getRequestModeration());
 
         if (updateRequest.getStateAction() != null) {
+
             if (updateRequest.getStateAction().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT)) {
-                event.setState(EventState.PUBLISHED.toString());
-                event.setPublishedOn(LocalDateTime.now());
+
+                // Нельзя публиковать событие со статусом PUBLISHED или CANCELED
+                EventState currentEventState = EventState.valueOf(event.getState());
+                if (currentEventState.equals(EventState.PUBLISHED)
+                        || currentEventState.equals(EventState.CANCELED)) {
+                    throw new ConflictOnRequestException("- Нельзя публиковать событие со статусом "
+                            + currentEventState);
+
+                } else {
+                    event.setState(EventState.PUBLISHED.toString());
+                    event.setPublishedOn(LocalDateTime.now());
+                }
+
             } else if (updateRequest.getStateAction().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT)) {
-                event.setState(EventState.CANCELED.toString());
+
+                // Нельзя отменять событие со статусом PUBLISHED
+                EventState currentEventState = EventState.valueOf(event.getState());
+                if (currentEventState.equals(EventState.PUBLISHED)) {
+                    throw new ConflictOnRequestException("- Нельзя отменять событие со статусом "
+                            + currentEventState);
+
+                } else {
+                    event.setState(EventState.CANCELED.toString());
+                }
             }
         }
 

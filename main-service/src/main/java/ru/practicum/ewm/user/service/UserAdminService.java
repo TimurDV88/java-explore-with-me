@@ -2,7 +2,6 @@ package ru.practicum.ewm.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -30,20 +29,19 @@ public class UserAdminService {
 
         log.info("-- Сохранение пользователя:{}", newUserDto);
 
-        User user = UserMapper.newUserDtoToUser(newUserDto);
-
-        try {
-
-            UserFullDto fullUserDtoToReturn = UserMapper.userToFullDto(userRepository.save(user));
-
-            log.info("-- Пользователь сохранён: {}", fullUserDtoToReturn);
-
-            return fullUserDtoToReturn;
-
-        } catch (DataIntegrityViolationException e) {
-
+        // блок проверок
+        if (userRepository.existsByEmail(newUserDto.getEmail())) {
             throw new ConflictOnRequestException("- Такой адрес почты уже есть в базе, пользователь не сохранён");
         }
+        // конец блока проверок
+
+        User user = UserMapper.newUserDtoToUser(newUserDto);
+
+        UserFullDto fullUserDtoToReturn = UserMapper.userToFullDto(userRepository.save(user));
+
+        log.info("-- Пользователь сохранён: {}", fullUserDtoToReturn);
+
+        return fullUserDtoToReturn;
     }
 
     public List<UserFullDto> getByParams(Long[] userIds, int from, int size) {

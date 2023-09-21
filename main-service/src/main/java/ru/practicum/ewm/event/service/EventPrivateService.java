@@ -25,7 +25,6 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 import static ru.practicum.ewm.event.dto.EventMapper.DATE_TIME_FORMATTER;
 
 @Service
-@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class EventPrivateService {
@@ -266,13 +264,13 @@ public class EventPrivateService {
             Long requestId = request.getId();
 
             if (!request.getEvent().equals(eventId)) {
-                log.info("-- Запрос на участие с id={} не относится к собыию с id={}",
+                log.info("- Запрос на участие с id={} не относится к собыию с id={}",
                         requestId, eventId);
                 continue;
             }
 
-            if (!request.getStatus().equals(PartRequestState.WAITING.toString())) {
-                log.info("-- Запрос на участие с id={} не имеет статус WAITING",
+            if (!request.getStatus().equals(PartRequestState.PENDING.toString())) {
+                log.info("- Запрос на участие с id={} не имеет статус PENDING",
                         requestId);
                 continue;
             }
@@ -298,7 +296,7 @@ public class EventPrivateService {
         event.setConfirmedRequests(numberOfConfirmedRequests); // сразу обновляет БАЗУ upd: только в тестах!
         eventRepository.save(event); // строка не нужна, см. предыдущий комментарий upd: нужна!
 
-        log.info("-- Число подтвержденных запросов на участие в событии с id={} обновлено: {}",
+        log.info("--- Число подтвержденных запросов на участие в событии с id={} обновлено: {}",
                 eventId, numberOfConfirmedRequests);
 
         // получаем список запросов с id из [ids], которые относятся к данному событию
@@ -316,7 +314,7 @@ public class EventPrivateService {
                 // получаем список отклонённых запросов
                 PartRequestMapper.partRequestToDto(
                         listOfProperRequests.stream()
-                                .filter(p -> p.getStatus().equals(PartRequestState.CONFIRMED.toString()))
+                                .filter(p -> p.getStatus().equals(PartRequestState.REJECTED.toString()))
                                 .collect(Collectors.toList()))
         );
 

@@ -8,8 +8,10 @@ import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.ewm.compilation.service.CompilationAdminService;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/compilations")
@@ -32,6 +34,7 @@ public class CompilationAdminController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") Long compId) {
 
         compilationAdminService.delete(compId);

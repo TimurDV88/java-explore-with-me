@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationPublicService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/compilations")

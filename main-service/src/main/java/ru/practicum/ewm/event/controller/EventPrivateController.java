@@ -12,9 +12,11 @@ import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.service.EventPrivateService;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/events")

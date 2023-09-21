@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
@@ -9,6 +10,7 @@ import ru.practicum.ewm.event.service.EventAdminService;
 import javax.validation.Valid;
 import java.util.List;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/events")

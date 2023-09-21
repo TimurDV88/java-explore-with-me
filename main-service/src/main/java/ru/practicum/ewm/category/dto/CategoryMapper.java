@@ -26,7 +26,6 @@ public class CategoryMapper {
     public static Category newCategoryDtoToModel(NewCategoryDto newCategoryDto) {
 
         Category category = new Category();
-        category.setId(newCategoryDto.getId());
         category.setName(newCategoryDto.getName());
 
         return category;

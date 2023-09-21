@@ -19,11 +19,11 @@ public class EventFullDto {
 
     private final Integer confirmedRequests;
 
-    private final LocalDateTime createdOn;
+    private final String createdOn;
 
     private final String description;
 
-    private final LocalDateTime eventDate;
+    private final String eventDate;
 
     private final UserShortDto initiator;
 

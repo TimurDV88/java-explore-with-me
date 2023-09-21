@@ -11,6 +11,7 @@ import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.error.exception.ConflictOnRequestException;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
+import ru.practicum.ewm.event.dto.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
@@ -33,6 +34,8 @@ public class PartRequestService {
 
         log.info("-- Добавление запроса от пользователя id={} на участие в событии id={}",
                 requesterId, eventId);
+
+        String currentTimeString = LocalDateTime.now().format(EventMapper.DATE_TIME_FORMATTER);
 
         if (!userRepository.existsById(requesterId)) {
             throw new NotFoundException("- Пользователь с id=" + requesterId + " не найден");
@@ -58,8 +61,10 @@ public class PartRequestService {
 
         Integer confRequests = event.getConfirmedRequests();
         Integer partLimit = event.getParticipantLimit();
+
         if (confRequests != null && partLimit != null && partLimit != 0
-                && confRequests >= event.getParticipantLimit()) {
+                && confRequests >= partLimit) {
+
             throw new ConflictOnRequestException("- Достигнут лимит запросов на участие в событии");
         }
         // конец блока проверок
@@ -67,14 +72,15 @@ public class PartRequestService {
         // создаём новый запрос
         ParticipationRequest participationRequest = new ParticipationRequest();
 
-        participationRequest.setCreated(LocalDateTime.now());
+        participationRequest.setCreated(LocalDateTime.parse(currentTimeString, EventMapper.DATE_TIME_FORMATTER));
         participationRequest.setEvent(eventId);
         participationRequest.setRequester(requesterId);
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             participationRequest.setStatus(PartRequestState.CONFIRMED.toString());
+            eventRepository.updateConfirmedRequestsById(eventId);
         } else {
-            participationRequest.setStatus(PartRequestState.WAITING.toString());
+            participationRequest.setStatus(PartRequestState.PENDING.toString());
         }
 
         PartRequestDto partRequestDto =

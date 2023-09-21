@@ -45,7 +45,7 @@ public class EventPublicService {
                                                int from,
                                                int size) {
 
-        log.info("-- Возвращение событиий с параметрами (Public): " +
+        log.info("-- Возвращение событий с параметрами (Public): " +
                         "text={}, categories={}, paid={}, start={}, end={}, onlyAvailable={}, from={}, size={}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
 
@@ -127,7 +127,7 @@ public class EventPublicService {
         // энд
         BooleanExpression byEnd;
         if (rangeEnd != null) {
-            byEnd = QEvent.event.eventDate.after(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
+            byEnd = QEvent.event.eventDate.before(LocalDateTime.parse(rangeEnd, EventMapper.DATE_TIME_FORMATTER));
         } else {
             byEnd = null;
         }

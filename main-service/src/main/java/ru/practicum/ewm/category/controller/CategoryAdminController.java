@@ -7,9 +7,11 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.service.CategoryAdminService;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/categories")
@@ -25,6 +27,7 @@ public class CategoryAdminController {
     }
 
     @DeleteMapping("/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeById(@PathVariable @NotNull Long catId) {
 
         categoryAdminService.removeById(catId);
@@ -32,8 +35,8 @@ public class CategoryAdminController {
 
     @PatchMapping("/{catId}")
     public CategoryDto updateById(@PathVariable @NotNull Long catId,
-                                  @RequestBody @Valid CategoryDto categoryDto) {
+                                  @RequestBody @Valid NewCategoryDto newCategoryDto) {
 
-        return categoryAdminService.updateById(catId, categoryDto);
+        return categoryAdminService.updateById(catId, newCategoryDto);
     }
 }

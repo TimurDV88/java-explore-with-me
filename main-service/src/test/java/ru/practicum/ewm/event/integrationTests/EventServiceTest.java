@@ -14,7 +14,6 @@ import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
 import ru.practicum.ewm.ParticipationRequest.model.PartRequestUpdateState;
 import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.category.controller.CategoryAdminController;
-import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.event.controller.EventAdminController;
 import ru.practicum.ewm.event.controller.EventPrivateController;
@@ -58,9 +57,14 @@ class EventServiceTest {
 
         userFullDto = userAdminController.add(new NewUserDto("user_name", "email@email.com"));
 
-        String annotation = "annotation_field";
-        Long category = categoryAdminController.add(new NewCategoryDto(null, "category_name")).getId();
-        String description = "description_field";
+        String annotation = "Assumenda mollitia hic. Nulla fugiat molestias nihil eos autem. Cupiditate rem ut. " +
+                "Vel at facilis non velit iste delectus reprehenderit aperiam rerum.";
+
+        NewCategoryDto newCategoryDto = new NewCategoryDto();
+        newCategoryDto.setName("category_name");
+        Long category = categoryAdminController.add(newCategoryDto).getId();
+
+        String description = "Assumenda mollitia hic. Nulla fugiat";
 
         String eventDate = LocalDateTime.now().plusDays(1).format(EventMapper.DATE_TIME_FORMATTER);
 
@@ -287,14 +291,14 @@ class EventServiceTest {
         PartRequestDto partRequestDto2 =
                 PartRequestMapper.partRequestToDto(partRequestRepository.findById(partRequestDto.getId()).get());
         assertEquals(partRequestDto, partRequestDto2);
-        assertEquals(PartRequestState.WAITING, partRequestDto2.getStatus());
+        assertEquals(PartRequestState.PENDING, partRequestDto2.getStatus());
 
         // добавили новый запрос на участие от юзер3
         partRequestDto = partRequestController.add(user3.getId(), eventFullDto.getId());
         PartRequestDto partRequestDto3 =
                 PartRequestMapper.partRequestToDto(partRequestRepository.findById(partRequestDto.getId()).get());
         assertEquals(partRequestDto, partRequestDto3);
-        assertEquals(PartRequestState.WAITING, partRequestDto3.getStatus());
+        assertEquals(PartRequestState.PENDING, partRequestDto3.getStatus());
 
         // Обновили запрос на участие от юзер2 на CONFIRMED
         EventRequestStatusUpdateRequest statusUpdateRequest = new EventRequestStatusUpdateRequest();
@@ -332,6 +336,32 @@ class EventServiceTest {
         assertEquals(1, eventFullDto.getConfirmedRequests());
     }
 
+    @Test
+    void cancelRequest() {
+
+        EventFullDto eventFullDto = eventPrivateController.add(userFullDto.getId(), newEventDto);
+
+        UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
+        updateRequest.setStateAction(PUBLISH_EVENT);
+        eventAdminController.updateEventByAdmin(eventFullDto.getId(), updateRequest);
+
+        eventFullDto = eventPrivateController.getById(userFullDto.getId(), eventFullDto.getId());
+        assertEquals(0, eventFullDto.getConfirmedRequests());
+
+        UserFullDto user2 = userAdminController.add(new NewUserDto("user 2", "email2@k.rt"));
+
+        PartRequestDto partRequestDto = partRequestController.add(user2.getId(), eventFullDto.getId());
+
+        System.out.println("\nnewReq = " + partRequestDto + "\n");
+        assertEquals(PartRequestState.PENDING, partRequestDto.getStatus());
+
+        partRequestDto = partRequestController.cancelPartRequest(user2.getId(), partRequestDto.getId());
+
+        System.out.println("\ncancelled = " + partRequestDto + "\n");
+        assertEquals(PartRequestState.CANCELED, partRequestDto.getStatus());
+
+    }
+
     /*
         EventPublic
      */
@@ -344,7 +374,6 @@ class EventServiceTest {
         updateRequest.setStateAction(PUBLISH_EVENT);
         eventAdminController.updateEventByAdmin(eventDto1.getId(), updateRequest);
 
-        Integer views = 0;
 
         String uri = "test_uri";
         String ip = "test_ip";
@@ -371,10 +400,10 @@ class EventServiceTest {
                 "EVENT_DATE", 0, 10);
 
         assertEquals(1, list.size());
-        views++;
 
-        // text = ok text part
-        textToSearch = "descr";
+        // text = ok text long
+        textToSearch = "Assumenda mollitia hic. Nulla fugiat molestias nihil eos autem. Cupiditate rem ut. " +
+                "Vel at facilis non velit iste delectus reprehenderit aperiam rerum.";
         assert (eventDto1.getDescription().toLowerCase().contains(textToSearch.toLowerCase())
                 || eventDto1.getAnnotation().toLowerCase().contains(textToSearch.toLowerCase()));
 
@@ -385,7 +414,6 @@ class EventServiceTest {
                 "EVENT_DATE", 0, 10);
 
         assertEquals(1, list.size());
-        views++;
 
         // categories
         list = eventPublicService.getByParameters(uri, ip,
@@ -396,7 +424,6 @@ class EventServiceTest {
                 "EVENT_DATE", 0, 10);
 
         assertEquals(1, list.size());
-        views++;
 
         // paid
         list = eventPublicService.getByParameters(uri, ip,
@@ -407,7 +434,6 @@ class EventServiceTest {
                 "EVENT_DATE", 0, 10);
 
         assertEquals(1, list.size());
-        views++;
 
         list = eventPublicService.getByParameters(uri, ip,
 
@@ -418,10 +444,9 @@ class EventServiceTest {
 
         assertEquals(0, list.size());
 
-        // check event views
-        Event event = eventRepository.findById(eventDto1.getId()).get();
 
-        //assertEquals(views, event.getViews());
+
+
     }
 
     @Test

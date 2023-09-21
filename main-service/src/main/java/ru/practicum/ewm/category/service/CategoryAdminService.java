@@ -8,7 +8,9 @@ import ru.practicum.ewm.category.dto.CategoryMapper;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.error.exception.ConflictOnRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
+import ru.practicum.ewm.event.repository.EventRepository;
 
 @Service
 @Slf4j
@@ -16,10 +18,17 @@ import ru.practicum.ewm.error.exception.NotFoundException;
 public class CategoryAdminService {
 
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     public CategoryDto add(NewCategoryDto newCategoryDto) {
 
         log.info("-- Сохранение категории: {}", newCategoryDto);
+
+        // блок проверок
+        if (categoryRepository.existsByName(newCategoryDto.getName())) {
+            throw new ConflictOnRequestException("- Такое имя категории уже есть в базе, категория не сохранена");
+        }
+        // конец блока проверок
 
         Category category = CategoryMapper.newCategoryDtoToModel(newCategoryDto);
 
@@ -32,18 +41,25 @@ public class CategoryAdminService {
         return categoryDtoToReturn;
     }
 
-    public CategoryDto updateById(Long categoryId, CategoryDto categoryDto) {
+    public CategoryDto updateById(Long categoryId, NewCategoryDto newCategoryDto) {
 
         log.info("-- Обновление категории №{}", categoryId);
 
         Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
                 new NotFoundException("- Категория №" + categoryId + " не найдена в базе"));
 
-        category.setName(categoryDto.getName());
+        // блок проверок
+        if (categoryRepository.existsByName(newCategoryDto.getName())
+                && !category.getName().equals(newCategoryDto.getName())) {
+            throw new ConflictOnRequestException("- Такое имя категории уже есть в базе, категория не обновлена");
+        }
+        // конец блока проверок
+
+        category.setName(newCategoryDto.getName());
 
         CategoryDto categoryDtoToReturn = CategoryMapper.categoryToDto(categoryRepository.save(category));
 
-        log.info("-- Категория обновлена: {}", categoryDto);
+        log.info("-- Категория обновлена: {}", newCategoryDto);
 
         return categoryDtoToReturn;
     }
@@ -54,6 +70,12 @@ public class CategoryAdminService {
 
         Category categoryToCheck = categoryRepository.findById(categoryId).orElseThrow(() ->
                 new NotFoundException("- Категория №" + categoryId + " не найдена в базе"));
+
+        // блок проверок
+        if (eventRepository.existsByCategoryId(categoryId)) {
+            throw new ConflictOnRequestException("- Нельзя удалить категорию с привязанными событиями");
+        }
+        // конец блока проверок
 
         CategoryDto categoryToShowInLog = CategoryMapper.categoryToDto(categoryToCheck);
 

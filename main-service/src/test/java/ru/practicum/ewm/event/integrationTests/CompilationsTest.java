@@ -7,14 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.controller.CategoryAdminController;
-import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.compilation.controller.CompilationAdminController;
 import ru.practicum.ewm.compilation.controller.CompilationPublicController;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.ewm.compilation.repository.CompEventRepository;
-import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.controller.EventPrivateController;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventMapper;
@@ -34,11 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class CollectionsTest {
+public class CompilationsTest {
 
     private final CompilationAdminController compilationAdminController;
     private final CompilationPublicController compilationPublicController;
-    private final CompilationRepository compilationRepository;
     private final CompEventRepository compEventRepository;
 
     private final EventPrivateController eventPrivateController;
@@ -57,7 +55,9 @@ public class CollectionsTest {
 
         UserFullDto userFullDto = userAdminController.add(new NewUserDto("user_name", "email@email.com"));
 
-        Long category = categoryAdminController.add(new CategoryDto(null, "category_name")).getId();
+        NewCategoryDto newCategoryDto = new NewCategoryDto();
+        newCategoryDto.setName("category_name");
+        Long category = categoryAdminController.add(newCategoryDto).getId();
 
         String eventDate = LocalDateTime.now().plusDays(1).format(EventMapper.DATE_TIME_FORMATTER);
 
@@ -155,6 +155,9 @@ public class CollectionsTest {
         //get by null params (public)
         List<CompilationDto> compList =
                 compilationPublicController.getByParameters(null, 0, 10);
+
+        System.out.println("\ncompList=" + compList.toString() + "\n");
+
         assertEquals(2, compList.size());
 
         //get by pinned=true (public)
