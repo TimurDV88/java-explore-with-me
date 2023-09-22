@@ -1,6 +1,7 @@
 package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.StatEndPoints;
 import ru.practicum.ewm.dto.NewStatDto;
@@ -17,6 +18,7 @@ public class StatServiceController {
     private final StatService statService;
 
     @PostMapping(StatEndPoints.POST_RECORD_PATH)
+    @ResponseStatus(HttpStatus.CREATED)
     public StatRecordDto addNewStatRecord(@RequestBody NewStatDto newStatDto) {
 
         return statService.add(newStatDto);

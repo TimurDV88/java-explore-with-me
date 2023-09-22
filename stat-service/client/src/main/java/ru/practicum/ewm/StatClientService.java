@@ -41,7 +41,11 @@ public class StatClientService {
 
         String[] uris = new String[]{uri};
         boolean unique = true;
-        List<StatDtoToReturn> listOfStatDto = statClient.get(appName, null, null, uris, unique).getBody();
+
+        String start = LocalDateTime.now().minusYears(20).format(StatMapper.DATE_TIME_FORMATTER);
+        String end = LocalDateTime.now().plusYears(20).format(StatMapper.DATE_TIME_FORMATTER);
+
+        List<StatDtoToReturn> listOfStatDto = statClient.get(appName, start, end, uris, unique).getBody();
         Integer views = 0;
 
         if (listOfStatDto != null) {

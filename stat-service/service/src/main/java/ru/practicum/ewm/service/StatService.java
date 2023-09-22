@@ -8,6 +8,7 @@ import ru.practicum.ewm.dto.NewStatDto;
 import ru.practicum.ewm.dto.StatDtoToReturn;
 import ru.practicum.ewm.dto.StatMapper;
 import ru.practicum.ewm.dto.StatRecordDto;
+import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.model.StatRecord;
 import ru.practicum.ewm.repository.StatRepository;
 
@@ -52,6 +53,7 @@ public class StatService {
                 unique
         );
 
+        // блок проверок
         if (appName == null || !statRepository.existsByApp(appName)) {
             log.info("- Данное имя 'app' отсутсвует в базе статистики: {}", appName);
             return List.of();
@@ -68,11 +70,15 @@ public class StatService {
             end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
             endTime = LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
 
+            if (startTime.isAfter(endTime)) {
+                throw new IncorrectRequestException("- start должен быть позже end");
+            }
+
         } catch (DateTimeParseException e) {
 
-            startTime = LocalDateTime.now().minusYears(10);
-            endTime = LocalDateTime.now().plusYears(10);
+            throw new IncorrectRequestException("- Неверный формат даты start или end");
         }
+        // конец блока проверок
 
         if (uris == null) {
             uris = statRepository.listOfAllUris(appName, startTime, endTime).toArray((new String[0]));

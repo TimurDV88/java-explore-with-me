@@ -19,6 +19,7 @@ import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -152,11 +153,6 @@ public class EventPublicService {
 
                 pageRequest);
 
-        // отметка просмотров событий в бд
-/*        for (Event event : foundEvents) {
-            event.setViews(event.getViews() + 1);
-        }*/
-
         // маппинг для возврата полученного списка
         List<EventShortDto> listToReturn = EventMapper.eventToShortDto(foundEvents);
 
@@ -179,7 +175,7 @@ public class EventPublicService {
         Integer views = statClientService.getViewsByUri(appName, uri);
         event.setViews(views);
 
-        EventFullDto eventFullDto = EventMapper.eventToFullDto(event);
+        EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event)); //event);
 
         log.info("-- Событие с id={} возвращёно (Public)", eventId);
 
