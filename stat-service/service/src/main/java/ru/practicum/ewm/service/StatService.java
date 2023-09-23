@@ -10,15 +10,13 @@ import ru.practicum.ewm.dto.StatMapper;
 import ru.practicum.ewm.dto.StatRecordDto;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.model.StatRecord;
+import ru.practicum.ewm.repository.IpCountByUri;
 import ru.practicum.ewm.repository.StatRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -85,18 +83,19 @@ public class StatService {
         }
 
         List<StatDtoToReturn> listToReturn = new ArrayList<>();
-        int hits;
+        Long hits;
 
-        for (String uri : uris) {
+        List<IpCountByUri>  hitsByUri;
 
-            if (unique) {
-                hits = statRepository.sizeOfUniqueIpRecordsListByUri(appName, startTime, endTime, uri);
+        if (unique) {
+            hitsByUri = statRepository.hitsOfUniqueIpRecordsListByUriIn(appName, startTime, endTime, uris);
+        } else {
+            hitsByUri = statRepository.hitsOfAllRecordsListByUriIn(appName, startTime, endTime, uris);
+        }
 
-            } else {
-                hits = statRepository.sizeOfAllRecordsListByUri(appName, startTime, endTime, uri);
-            }
-
-            listToReturn.add(new StatDtoToReturn(appName, uri, hits));
+        for (IpCountByUri ipCountByUri : hitsByUri) {
+            hits = ipCountByUri.getHits();
+            listToReturn.add(new StatDtoToReturn(appName, ipCountByUri.getUri(), hits.intValue()));
         }
 
         listToReturn.sort(Comparator.reverseOrder());

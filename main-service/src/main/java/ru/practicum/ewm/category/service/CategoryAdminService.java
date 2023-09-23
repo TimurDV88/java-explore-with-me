@@ -12,6 +12,8 @@ import ru.practicum.ewm.error.exception.ConflictOnRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.transaction.Transactional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class CategoryAdminService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
 
+    @Transactional
     public CategoryDto add(NewCategoryDto newCategoryDto) {
 
         log.info("-- Сохранение категории: {}", newCategoryDto);
@@ -41,6 +44,7 @@ public class CategoryAdminService {
         return categoryDtoToReturn;
     }
 
+    @Transactional
     public CategoryDto updateById(Long categoryId, NewCategoryDto newCategoryDto) {
 
         log.info("-- Обновление категории №{}", categoryId);
@@ -64,6 +68,7 @@ public class CategoryAdminService {
         return categoryDtoToReturn;
     }
 
+    @Transactional
     public void removeById(Long categoryId) {
 
         log.info("-- Удаление категории №{}", categoryId);

@@ -19,6 +19,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -115,6 +116,7 @@ public class EventAdminService {
         return listToReturn;
     }
 
+    @Transactional
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
 
         log.info("-- Обновление события id={} (Admin): {}", eventId, updateRequest);

@@ -17,6 +17,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,8 @@ public class PartRequestService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
+
+    @Transactional
     public PartRequestDto add(Long requesterId, Long eventId) {
 
         log.info("-- Добавление запроса от пользователя id={} на участие в событии id={}",
@@ -112,6 +115,7 @@ public class PartRequestService {
         return listToReturn;
     }
 
+    @Transactional
     public PartRequestDto cancelPartRequest(Long requesterId, Long requestId) {
 
         log.info("-- Отмена запроса id={} от пользователя id={}",

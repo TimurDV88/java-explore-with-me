@@ -14,21 +14,27 @@ public interface StatRepository extends JpaRepository<StatRecord, Long> {
     /*
         Методы поиска записей по uri
      */
-    @Query("SELECT COUNT(DISTINCT r.ip) " + // with "DISTINCT"
+    @Query("SELECT new ru.practicum.ewm.repository.IpCountByUri(r.uri, COUNT(DISTINCT r.ip)) " + // with "DISTINCT"
             "FROM StatRecord AS r " +
-            "WHERE r.app = :appName " +
+            "WHERE r.app like :appName " +
             "AND r.timestamp > :start " +
             "AND r.timestamp < :end " +
-            "AND r.uri = :uri")
-    int sizeOfUniqueIpRecordsListByUri(String appName, LocalDateTime start, LocalDateTime end, String uri);
+            "AND r.uri IN (:uris) " +
+            "GROUP BY r.uri " +
+            "ORDER BY COUNT(r.ip) DESC")
+    List<IpCountByUri> hitsOfUniqueIpRecordsListByUriIn(
+            String appName, LocalDateTime start, LocalDateTime end, String[] uris);
 
-    @Query("SELECT COUNT(r.id) " + // without "DISTINCT"
+    @Query("SELECT new ru.practicum.ewm.repository.IpCountByUri(r.uri, COUNT(r.id)) " + // with "DISTINCT"
             "FROM StatRecord AS r " +
-            "WHERE r.app = :appName " +
+            "WHERE r.app like :appName " +
             "AND r.timestamp > :start " +
             "AND r.timestamp < :end " +
-            "AND r.uri = :uri")
-    int sizeOfAllRecordsListByUri(String appName, LocalDateTime start, LocalDateTime end, String uri);
+            "AND r.uri IN (:uris) " +
+            "GROUP BY r.uri " +
+            "ORDER BY COUNT(r.id) DESC")
+    List<IpCountByUri> hitsOfAllRecordsListByUriIn(
+            String appName, LocalDateTime start, LocalDateTime end, String[] uris);
 
     /*
         Метод поиска всех uri

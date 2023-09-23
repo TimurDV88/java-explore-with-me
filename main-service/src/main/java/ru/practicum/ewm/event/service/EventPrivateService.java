@@ -25,6 +25,7 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class EventPrivateService {
     private final PartRequestRepository partRequestRepository;
 
 
+    @Transactional
     public EventFullDto add(Long initiatorId, NewEventDto newEventDto) {
 
         log.info("-- Добавление события от пользователя id={}: {}", initiatorId, newEventDto);
@@ -130,6 +132,7 @@ public class EventPrivateService {
         return eventFullDto;
     }
 
+    @Transactional
     public EventFullDto updateEventByInitiator(Long initiatorId, Long eventId, UpdateEventUserRequest updateRequest) {
 
         log.info("-- Обновление события id={} от пользователя c id={}: {}", eventId, initiatorId, updateRequest);
@@ -219,6 +222,7 @@ public class EventPrivateService {
         return listToReturn;
     }
 
+    @Transactional
     public EventRequestStatusUpdateResult updateRequestStatusFromInitiator(
 
             Long initiatorId,

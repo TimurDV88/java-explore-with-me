@@ -16,6 +16,7 @@ import ru.practicum.ewm.event.dto.EventMapper;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CompilationAdminService {
     private final CompEventRepository compEventRepository;
     private final EventRepository eventRepository;
 
+    @Transactional
     public CompilationDto add(NewCompilationDto newCompilationDto) {
 
         log.info("-- Добавление подборки событий: {}", newCompilationDto);
@@ -78,6 +80,7 @@ public class CompilationAdminService {
         return result;
     }
 
+    @Transactional
     public CompilationDto update(Long compId, UpdateCompilationRequest updateRequest) {
 
         log.info("-- Обновление подборки событий: {}", updateRequest);
@@ -133,6 +136,7 @@ public class CompilationAdminService {
         return result;
     }
 
+    @Transactional
     public void delete(Long compId) {
 
         log.info("-- Удаление подборки событий №{}", compId);

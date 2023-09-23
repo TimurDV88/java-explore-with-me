@@ -15,6 +15,7 @@ import ru.practicum.ewm.user.dto.UserShortDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class UserAdminService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public UserFullDto add(NewUserDto newUserDto) {
 
         log.info("-- Сохранение пользователя:{}", newUserDto);
@@ -72,6 +74,7 @@ public class UserAdminService {
         return listToReturn;
     }
 
+    @Transactional
     public void removeById(Long userId) {
 
         log.info("--- Удаление пользователя №{}", userId);

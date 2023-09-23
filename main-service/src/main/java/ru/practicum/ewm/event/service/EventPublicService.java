@@ -18,6 +18,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -160,6 +161,7 @@ public class EventPublicService {
         return listToReturn;
     }
 
+    @Transactional
     public EventFullDto getById(Long eventId, String uri, String ip) {
 
         log.info("-- Возвращение события id={} (Public)", eventId);
