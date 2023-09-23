@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PartRequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
@@ -24,4 +25,7 @@ public interface PartRequestRepository extends JpaRepository<ParticipationReques
     void setStatus(List<Long> ids, String status);
 
     List<ParticipationRequest> findByEventAndIdIn(Long eventId, List<Long> ids);
+
+    // для рейтинга
+    Optional<ParticipationRequest> findByEventAndRequester(Long eventId, Long userId);
 }
