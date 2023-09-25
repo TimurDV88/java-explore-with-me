@@ -8,15 +8,15 @@ import ru.practicum.ewm.dto.NewStatDto;
 import ru.practicum.ewm.dto.StatDtoToReturn;
 import ru.practicum.ewm.dto.StatMapper;
 import ru.practicum.ewm.dto.StatRecordDto;
+import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.model.StatRecord;
+import ru.practicum.ewm.repository.IpCountByUri;
 import ru.practicum.ewm.repository.StatRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -25,7 +25,6 @@ import java.util.List;
 public class StatService {
 
     private final StatRepository statRepository;
-    private static final String APP_NAME = "ewm-main-service";
 
     public StatRecordDto add(NewStatDto newStatDto) {
 
@@ -42,47 +41,66 @@ public class StatService {
         return recordDto;
     }
 
-    public List<StatDtoToReturn> get(String start, String end, String[] uris, boolean unique) {
+    public List<StatDtoToReturn> get(String appName, String start, String end, String[] uris, boolean unique) {
 
-        log.info("-- Возвращение списка записей: start = {}, end = {}, uris = {}, unique = {}",
+        log.info("-- Возвращение списка записей: app={}, start={}, end={}, uris={}, unique={}",
+                appName,
                 start,
                 end,
                 Arrays.toString(uris),
                 unique
         );
 
-        List<StatDtoToReturn> listToReturn = new ArrayList<>();
-
-        start = java.net.URLDecoder.decode(start, StandardCharsets.UTF_8);
-        end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
-
-        LocalDateTime startTime =
-                LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
-        LocalDateTime endTime =
-                LocalDateTime.parse(end.replace("%20", " "), StatMapper.DATE_TIME_FORMATTER);
-
-        int hits;
-
-        if (uris == null) {
-
-            uris = statRepository.listOfAllUris(startTime, endTime).toArray((new String[0]));
-
+        // блок проверок
+        if (appName == null || !statRepository.existsByApp(appName)) {
+            log.info("- Данное имя 'app' отсутсвует в базе статистики: {}", appName);
+            return List.of();
         }
 
-        for (String uri : uris) {
+        LocalDateTime startTime;
+        LocalDateTime endTime;
 
-            if (unique) {
-                hits = statRepository.sizeOfUniqueIpRecordsListByUri(startTime, endTime, uri);
-            } else {
-                hits = statRepository.sizeOfAllRecordsListByUri(startTime, endTime, uri);
+        try {
+
+            start = java.net.URLDecoder.decode(start, StandardCharsets.UTF_8);
+            startTime = LocalDateTime.parse(start, StatMapper.DATE_TIME_FORMATTER);
+
+            end = java.net.URLDecoder.decode(end, StandardCharsets.UTF_8);
+            endTime = LocalDateTime.parse(end, StatMapper.DATE_TIME_FORMATTER);
+
+            if (startTime.isAfter(endTime)) {
+                throw new IncorrectRequestException("- start должен быть позже end");
             }
 
-            listToReturn.add(new StatDtoToReturn(APP_NAME, uri, hits));
+        } catch (DateTimeParseException e) {
+
+            throw new IncorrectRequestException("- Неверный формат даты start или end");
+        }
+        // конец блока проверок
+
+        if (uris == null) {
+            uris = statRepository.listOfAllUris(appName, startTime, endTime).toArray((new String[0]));
         }
 
-        log.info("-- Список возвращен, его размер: {}", listToReturn.size());
+        List<StatDtoToReturn> listToReturn = new ArrayList<>();
+        Long hits;
+
+        List<IpCountByUri>  hitsByUri;
+
+        if (unique) {
+            hitsByUri = statRepository.hitsOfUniqueIpRecordsListByUriIn(appName, startTime, endTime, uris);
+        } else {
+            hitsByUri = statRepository.hitsOfAllRecordsListByUriIn(appName, startTime, endTime, uris);
+        }
+
+        for (IpCountByUri ipCountByUri : hitsByUri) {
+            hits = ipCountByUri.getHits();
+            listToReturn.add(new StatDtoToReturn(appName, ipCountByUri.getUri(), hits.intValue()));
+        }
 
         listToReturn.sort(Comparator.reverseOrder());
+
+        log.info("-- Список возвращен, его размер: {}", listToReturn.size());
 
         return listToReturn;
     }
