@@ -67,4 +67,6 @@ public class Event {
     @Column(name = "views")
     private Integer views;
 
+    @Column(name = "rating")
+    private Integer rating;
 }

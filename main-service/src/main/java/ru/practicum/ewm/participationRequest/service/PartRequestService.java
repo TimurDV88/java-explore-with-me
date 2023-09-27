@@ -1,13 +1,13 @@
-package ru.practicum.ewm.ParticipationRequest.service;
+package ru.practicum.ewm.participationRequest.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.ParticipationRequest.dto.PartRequestDto;
-import ru.practicum.ewm.ParticipationRequest.dto.PartRequestMapper;
-import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
-import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
-import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
+import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
+import ru.practicum.ewm.participationRequest.dto.PartRequestMapper;
+import ru.practicum.ewm.participationRequest.model.PartRequestState;
+import ru.practicum.ewm.participationRequest.model.ParticipationRequest;
+import ru.practicum.ewm.participationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.error.exception.ConflictOnRequestException;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;

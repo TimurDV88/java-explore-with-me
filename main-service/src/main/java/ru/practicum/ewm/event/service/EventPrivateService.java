@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.ParticipationRequest.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.ewm.ParticipationRequest.dto.EventRequestStatusUpdateResult;
-import ru.practicum.ewm.ParticipationRequest.dto.PartRequestDto;
-import ru.practicum.ewm.ParticipationRequest.dto.PartRequestMapper;
-import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
-import ru.practicum.ewm.ParticipationRequest.model.PartRequestUpdateState;
-import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
-import ru.practicum.ewm.ParticipationRequest.repository.PartRequestRepository;
+import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateResult;
+import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
+import ru.practicum.ewm.participationRequest.dto.PartRequestMapper;
+import ru.practicum.ewm.participationRequest.model.PartRequestState;
+import ru.practicum.ewm.participationRequest.model.PartRequestUpdateState;
+import ru.practicum.ewm.participationRequest.model.ParticipationRequest;
+import ru.practicum.ewm.participationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.error.exception.ConflictOnRequestException;
@@ -83,6 +83,7 @@ public class EventPrivateService {
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING.toString());
         event.setViews(0);
+        event.setRating(0);
 
         EventFullDto eventFullDto = EventMapper.eventToFullDto(eventRepository.save(event));
 

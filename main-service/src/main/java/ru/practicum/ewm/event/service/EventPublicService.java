@@ -68,8 +68,10 @@ public class EventPublicService {
             sort = "eventDate";
         } else if (sort.equalsIgnoreCase("VIEWS")) {
             sort = "views";
+        } else if (sort.equalsIgnoreCase("RATING")) {
+            sort = "rating";
         } else {
-            throw new IncorrectRequestException("- sort должен быть EVENT_DATE или VIEWS");
+            throw new IncorrectRequestException("- sort должен быть EVENT_DATE, VIEWS или RATING");
         }
         // конец блока проверок
 
