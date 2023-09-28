@@ -26,7 +26,7 @@
 									"pm.test(\"Test user 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 133').to.eql(133);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 135').to.eql(135);\r",
 									"});\r",
 									"pm.test(\"Test user 'email' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -98,7 +98,7 @@
 									"pm.test(\"Test user 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 134').to.eql(134);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 136').to.eql(136);\r",
 									"});\r",
 									"pm.test(\"Test user 'email' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -170,7 +170,7 @@
 									"pm.test(\"Test user 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 135').to.eql(135);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 137').to.eql(137);\r",
 									"});\r",
 									"pm.test(\"Test user 'email' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -242,7 +242,7 @@
 									"pm.test(\"Test user 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 118').to.eql(118);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 120').to.eql(120);\r",
 									"});\r",
 									"pm.test(\"Test user 'name' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -304,7 +304,7 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 106').to.eql(106);\r",
 									"});\r",
 									"pm.test(\"Test user 'title' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -332,10 +332,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 1\",\r\n\"category\":118,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 1\"\r\n}"
+							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 1\",\r\n\"category\":120,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 1\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/133/events",
+							"raw": "http://localhost:8080/users/135/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -343,7 +343,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"133",
+								"135",
 								"events"
 							]
 						}
@@ -367,7 +367,7 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 104').to.eql(104);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 107').to.eql(107);\r",
 									"});\r",
 									"pm.test(\"Test user 'title' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -395,10 +395,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 2\",\r\n\"category\":118,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 2\"\r\n}"
+							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 2\",\r\n\"category\":120,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 2\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/134/events",
+							"raw": "http://localhost:8080/users/136/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -406,7 +406,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"134",
+								"136",
 								"events"
 							]
 						}
@@ -430,7 +430,7 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 105').to.eql(105);\r",
+									"    pm.expect(jsonData.id, '\"id\" must be 108').to.eql(108);\r",
 									"});\r",
 									"pm.test(\"Test user 'title' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -458,10 +458,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 3\",\r\n\"category\":118,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 3\"\r\n}"
+							"raw": "{\r\n\"annotation\":\"annotation for event for ratings 3\",\r\n\"category\":120,\r\n\"description\":\"description for event for ratings\",\r\n\"eventDate\":\"2025-09-28 15:06:24\",\r\n\"location\":{\"lat\":-71.6882,\"lon\":-126.7223},\r\n\"paid\":\"false\",\r\n\"participantLimit\":\"369\",\r\n\"requestModeration\":\"false\",\r\n\"title\":\"event for ratings 3\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/135/events",
+							"raw": "http://localhost:8080/users/137/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -469,7 +469,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"135",
+								"137",
 								"events"
 							]
 						}
@@ -493,7 +493,6 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(103);\r",
 									"});\r",
 									"pm.test(\"Test user 'state' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -524,7 +523,7 @@
 							"raw": "{\r\n\"stateAction\":\"PUBLISH_EVENT\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/103",
+							"raw": "http://localhost:8080/admin/events/106",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -533,7 +532,7 @@
 							"path": [
 								"admin",
 								"events",
-								"103"
+								"106"
 							]
 						}
 					},
@@ -556,7 +555,6 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 2').to.eql(104);\r",
 									"});\r",
 									"pm.test(\"Test user 'state' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -587,7 +585,7 @@
 							"raw": "{\r\n\"stateAction\":\"PUBLISH_EVENT\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/104",
+							"raw": "http://localhost:8080/admin/events/107",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -596,7 +594,7 @@
 							"path": [
 								"admin",
 								"events",
-								"104"
+								"107"
 							]
 						}
 					},
@@ -619,7 +617,6 @@
 									"pm.test(\"Test event 'id' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('id');\r",
-									"    pm.expect(jsonData.id, '\"id\" must be 3').to.eql(105);\r",
 									"});\r",
 									"pm.test(\"Test user 'state' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -650,7 +647,7 @@
 							"raw": "{\r\n\"stateAction\":\"PUBLISH_EVENT\"\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/105",
+							"raw": "http://localhost:8080/admin/events/108",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -659,7 +656,7 @@
 							"path": [
 								"admin",
 								"events",
-								"105"
+								"108"
 							]
 						}
 					},
@@ -683,12 +680,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"133\"').to.eql(133);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"104\"').to.eql(104);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -719,7 +714,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/133/requests?eventId=104",
+							"raw": "http://localhost:8080/users/135/requests?eventId=107",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -727,13 +722,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"133",
+								"135",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "104"
+									"value": "107"
 								}
 							]
 						}
@@ -758,12 +753,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"133\"').to.eql(133);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"105\"').to.eql(105);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -794,7 +787,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/133/requests?eventId=105",
+							"raw": "http://localhost:8080/users/135/requests?eventId=108",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -802,13 +795,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"133",
+								"135",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "105"
+									"value": "108"
 								}
 							]
 						}
@@ -833,12 +826,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"134\"').to.eql(134);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"103\"').to.eql(103);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -869,7 +860,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/134/requests?eventId=103",
+							"raw": "http://localhost:8080/users/136/requests?eventId=106",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -877,13 +868,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"134",
+								"136",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "103"
+									"value": "106"
 								}
 							]
 						}
@@ -908,12 +899,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"134\"').to.eql(134);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"105\"').to.eql(105);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -944,7 +933,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/134/requests?eventId=105",
+							"raw": "http://localhost:8080/users/136/requests?eventId=108",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -952,13 +941,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"134",
+								"136",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "105"
+									"value": "108"
 								}
 							]
 						}
@@ -983,12 +972,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"135\"').to.eql(135);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"103\"').to.eql(103);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -1019,7 +1006,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/135/requests?eventId=103",
+							"raw": "http://localhost:8080/users/137/requests?eventId=106",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1027,13 +1014,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"135",
+								"137",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "103"
+									"value": "106"
 								}
 							]
 						}
@@ -1058,12 +1045,10 @@
 									"pm.test(\"Test part_reuest 'requester' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('requester');\r",
-									"    pm.expect(jsonData.requester, '\"requester\" must be \"135\"').to.eql(135);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'event' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData).to.have.property('event');\r",
-									"    pm.expect(jsonData.event, '\"event\" must be \"104\"').to.eql(104);\r",
 									"});\r",
 									"pm.test(\"Test part_reuest 'status' field\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -1094,7 +1079,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/135/requests?eventId=104",
+							"raw": "http://localhost:8080/users/137/requests?eventId=107",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1102,13 +1087,13 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"135",
+								"137",
 								"requests"
 							],
 							"query": [
 								{
 									"key": "eventId",
-									"value": "104"
+									"value": "107"
 								}
 							]
 						}
@@ -1139,12 +1124,10 @@
 							"pm.test(\"Test rating 'eventId' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('eventId');\r",
-							"    pm.expect(jsonData.eventId, '\"eventId\" must be \"103\"').to.eql(103);\r",
 							"});\r",
 							"pm.test(\"Test rating 'userId' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('userId');\r",
-							"    pm.expect(jsonData.userId, '\"userId\" must be \"134\"').to.eql(134);\r",
 							"});\r",
 							"pm.test(\"Test rating 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1175,7 +1158,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/like?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1188,11 +1171,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1216,7 +1199,7 @@
 							"pm.test(\"Test event 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
+							"    pm.expect(jsonData.id, '\"id\" must be 106').to.eql(106);\r",
 							"});\r",
 							"pm.test(\"Test event 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1250,7 +1233,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/events/103",
+					"raw": "http://localhost:8080/events/106",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1258,7 +1241,7 @@
 					"port": "8080",
 					"path": [
 						"events",
-						"103"
+						"106"
 					]
 				}
 			},
@@ -1308,7 +1291,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/like?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1321,11 +1304,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1349,7 +1332,7 @@
 							"pm.test(\"Test event 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
+							"    pm.expect(jsonData.id, '\"id\" must be 106').to.eql(106);\r",
 							"});\r",
 							"pm.test(\"Test event 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1383,7 +1366,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/events/103",
+					"raw": "http://localhost:8080/events/106",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1391,7 +1374,7 @@
 					"port": "8080",
 					"path": [
 						"events",
-						"103"
+						"106"
 					]
 				}
 			},
@@ -1441,7 +1424,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/like?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1454,11 +1437,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1509,7 +1492,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/dislike?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/dislike?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1522,11 +1505,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1550,7 +1533,6 @@
 							"pm.test(\"Test event 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
 							"});\r",
 							"pm.test(\"Test event 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1584,7 +1566,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/events/103",
+					"raw": "http://localhost:8080/events/106",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1592,7 +1574,7 @@
 					"port": "8080",
 					"path": [
 						"events",
-						"103"
+						"106"
 					]
 				}
 			},
@@ -1642,7 +1624,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/dislike?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/dislike?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1655,11 +1637,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1683,7 +1665,6 @@
 							"pm.test(\"Test event 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
 							"});\r",
 							"pm.test(\"Test event 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1717,7 +1698,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/events/103",
+					"raw": "http://localhost:8080/events/106",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1725,7 +1706,7 @@
 					"port": "8080",
 					"path": [
 						"events",
-						"103"
+						"106"
 					]
 				}
 			},
@@ -1775,7 +1756,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=103&userId=134",
+					"raw": "http://localhost:8080/ratings/like?eventId=106&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1788,11 +1769,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "134"
+							"value": "136"
 						}
 					]
 				}
@@ -1843,7 +1824,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=103&userId=135",
+					"raw": "http://localhost:8080/ratings/like?eventId=106&userId=137",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1856,11 +1837,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "103"
+							"value": "106"
 						},
 						{
 							"key": "userId",
-							"value": "135"
+							"value": "137"
 						}
 					]
 				}
@@ -1911,7 +1892,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/ratings/like?eventId=104&userId=135",
+					"raw": "http://localhost:8080/ratings/like?eventId=107&userId=137",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1924,11 +1905,11 @@
 					"query": [
 						{
 							"key": "eventId",
-							"value": "104"
+							"value": "107"
 						},
 						{
 							"key": "userId",
-							"value": "135"
+							"value": "137"
 						}
 					]
 				}
@@ -1953,7 +1934,7 @@
 							"pm.test(\"Test user[0] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[0]).to.have.property('id');\r",
-							"    pm.expect(jsonData[0].id, '\"id\" must be 133').to.eql(133);\r",
+							"    pm.expect(jsonData[0].id, '\"id\" must be 135').to.eql(135);\r",
 							"});\r",
 							"pm.test(\"Test user[0] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -1964,7 +1945,7 @@
 							"pm.test(\"Test user[1] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[1]).to.have.property('id');\r",
-							"    pm.expect(jsonData[1].id, '\"id\" must be 134').to.eql(134);\r",
+							"    pm.expect(jsonData[1].id, '\"id\" must be 136').to.eql(136);\r",
 							"});\r",
 							"pm.test(\"Test user[1] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -2041,7 +2022,7 @@
 							"pm.test(\"Test event[0] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[0]).to.have.property('id');\r",
-							"    pm.expect(jsonData[0].id, '\"id\" must be 103').to.eql(103);\r",
+							"    pm.expect(jsonData[0].id, '\"id\" must be 106').to.eql(106);\r",
 							"});\r",
 							"pm.test(\"Test event[0] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -2052,7 +2033,7 @@
 							"pm.test(\"Test event[1] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[1]).to.have.property('id');\r",
-							"    pm.expect(jsonData[1].id, '\"id\" must be 104').to.eql(104);\r",
+							"    pm.expect(jsonData[1].id, '\"id\" must be 107').to.eql(107);\r",
 							"});\r",
 							"pm.test(\"Test event[1] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -2125,7 +2106,7 @@
 							"pm.test(\"Test event[0] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[0]).to.have.property('id');\r",
-							"    pm.expect(jsonData[0].id, '\"id\" must be 103').to.eql(103);\r",
+							"    pm.expect(jsonData[0].id, '\"id\" must be 106').to.eql(106);\r",
 							"});\r",
 							"pm.test(\"Test event[0] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -2136,7 +2117,7 @@
 							"pm.test(\"Test event[1] 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData[1]).to.have.property('id');\r",
-							"    pm.expect(jsonData[1].id, '\"id\" must be 104').to.eql(104);\r",
+							"    pm.expect(jsonData[1].id, '\"id\" must be 107').to.eql(107);\r",
 							"});\r",
 							"pm.test(\"Test event[1] 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -2206,7 +2187,7 @@
 							"pm.test(\"Test event 'id' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData.id, '\"id\" must be 103').to.eql(103);\r",
+							"    pm.expect(jsonData.id, '\"id\" must be 106').to.eql(106);\r",
 							"});\r",
 							"pm.test(\"Test event 'rating' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
