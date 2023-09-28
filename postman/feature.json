@@ -2171,7 +2171,7 @@
 			"response": []
 		},
 		{
-			"name": "Check event1 rating again",
+			"name": "Check event1 rating in the end",
 			"event": [
 				{
 					"listen": "test",
@@ -2221,7 +2221,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/events/103",
+					"raw": "http://localhost:8080/events/106",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2229,7 +2229,7 @@
 					"port": "8080",
 					"path": [
 						"events",
-						"103"
+						"106"
 					]
 				}
 			},
