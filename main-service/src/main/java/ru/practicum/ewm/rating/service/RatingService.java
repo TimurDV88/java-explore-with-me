@@ -54,8 +54,7 @@ public class RatingService {
         if (partRequest.isEmpty()) {
             throw new IncorrectRequestException("- Запрос пользователя на участие в событии отсутствует");
         }
-        if (!partRequest.get().getStatus().
-                equals(PartRequestState.CONFIRMED.toString())) {
+        if (!partRequest.get().getStatus().equals(PartRequestState.CONFIRMED.toString())) {
             throw new IncorrectRequestException("- Запрос пользователя на участие в событии не подтвержден");
         }
         //конец блока проверок
@@ -124,8 +123,7 @@ public class RatingService {
         if (partRequest.isEmpty()) {
             throw new IncorrectRequestException("- Запрос пользователя на участие в событии отсутствует");
         }
-        if (!partRequest.get().getStatus().
-                equals(PartRequestState.CONFIRMED.toString())) {
+        if (!partRequest.get().getStatus().equals(PartRequestState.CONFIRMED.toString())) {
             throw new IncorrectRequestException("- Запрос пользователя на участие в событии не подтвержден");
         }
         //конец блока проверок
