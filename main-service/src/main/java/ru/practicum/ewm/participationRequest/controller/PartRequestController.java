@@ -6,10 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
 import ru.practicum.ewm.participationRequest.service.PartRequestService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/requests")

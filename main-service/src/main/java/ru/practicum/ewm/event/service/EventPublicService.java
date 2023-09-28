@@ -83,7 +83,7 @@ public class EventPublicService {
 
         if (size > 0 && from >= 0) {
             int page = from / size;
-            pageRequest = PageRequest.of(page, size, Sort.by(sort).ascending());
+            pageRequest = PageRequest.of(page, size, Sort.by(sort).descending());
         } else {
             throw new IncorrectRequestException("- Размер страницы должен быть > 0, 'from' должен быть >= 0");
         }

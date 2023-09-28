@@ -6,7 +6,6 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.user.dto.UserShortDto;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 
 @Data

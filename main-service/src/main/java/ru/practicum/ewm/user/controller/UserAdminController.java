@@ -2,7 +2,6 @@ package ru.practicum.ewm.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.NewUserDto;
 import ru.practicum.ewm.user.dto.UserFullDto;
@@ -12,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/users")

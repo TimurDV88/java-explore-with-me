@@ -44,7 +44,7 @@ public class UserMapper {
 
         List<UserShortDto> userShortDtoList = new ArrayList<>();
 
-        for (User user: users) {
+        for (User user : users) {
             userShortDtoList.add(userToShortDto(user));
         }
         return userShortDtoList;

@@ -5,10 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/categories")

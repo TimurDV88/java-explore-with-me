@@ -3,20 +3,18 @@ package ru.practicum.ewm.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateResult;
-import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.service.EventPrivateService;
+import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.participationRequest.dto.EventRequestStatusUpdateResult;
+import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/events")

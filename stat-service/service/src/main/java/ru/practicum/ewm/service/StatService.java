@@ -13,6 +13,7 @@ import ru.practicum.ewm.model.StatRecord;
 import ru.practicum.ewm.repository.IpCountByUri;
 import ru.practicum.ewm.repository.StatRepository;
 
+import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -26,6 +27,7 @@ public class StatService {
 
     private final StatRepository statRepository;
 
+    @Transactional
     public StatRecordDto add(NewStatDto newStatDto) {
 
         log.info("-- Добавление записи: {}", newStatDto);

@@ -5,15 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.participationRequest.model.PartRequestState;
-import ru.practicum.ewm.participationRequest.model.ParticipationRequest;
-import ru.practicum.ewm.participationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.error.exception.IncorrectRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.dto.EventMapper;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.participationRequest.model.PartRequestState;
+import ru.practicum.ewm.participationRequest.model.ParticipationRequest;
+import ru.practicum.ewm.participationRequest.repository.PartRequestRepository;
 import ru.practicum.ewm.rating.dto.RatingDto;
 import ru.practicum.ewm.rating.dto.RatingMapper;
 import ru.practicum.ewm.rating.model.Rating;
@@ -24,9 +24,8 @@ import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -72,18 +71,25 @@ public class RatingService {
             // если лайк от этого пользователя уже был, то повторное проставление убирает текущий лайк
             if (currentRating.getRating() == 1) {
                 ratingRepository.deleteById(currentRating.getId());
+                currentRating.setRating(0);
                 event.setRating(event.getRating() - 1);
                 initiator.setRating(initiator.getRating() - 1);
+                eventRepository.save(event);
+                userRepository.save(initiator);
                 log.info("-- Существующий лайк удалён при повторном добавлении лайка событию");
-                return null;
+
+                // если дизлайк от этого пользователя уже был, то проставление лайка убирает текущий дизлайк
             } else if (currentRating.getRating() == -1) {
                 currentRating.setRating(1);
                 currentRating = ratingRepository.save(currentRating);
                 event.setRating(event.getRating() + 2);
                 initiator.setRating(initiator.getRating() + 2);
+                eventRepository.save(event);
+                userRepository.save(initiator);
                 log.info("-- Существующий дизлайк удалён, новый лайк добавлен");
-                return RatingMapper.ratingToDto(currentRating);
             }
+
+            return RatingMapper.ratingToDto(currentRating);
         }
 
         // если пользователь ещё не оценивал событие
@@ -94,6 +100,8 @@ public class RatingService {
         newRating = ratingRepository.save(newRating);
         event.setRating(event.getRating() + 1);
         initiator.setRating(initiator.getRating() + 1);
+        eventRepository.save(event);
+        userRepository.save(initiator);
 
         log.info("-- Новый лайк добавлен");
 
@@ -132,18 +140,25 @@ public class RatingService {
             // если дизлайк от этого пользователя уже был, то повторное проставление убирает текущий дизлайк
             if (currentRating.getRating() == -1) {
                 ratingRepository.deleteById(currentRating.getId());
+                currentRating.setRating(0);
                 event.setRating(event.getRating() + 1);
                 initiator.setRating(initiator.getRating() + 1);
+                eventRepository.save(event);
+                userRepository.save(initiator);
                 log.info("-- Существующий дизлайк удалён при повторном добавлении дизлайка событию");
-                return null;
+
+                // если лайк от этого пользователя уже был, то проставление дизлайка убирает текущий лайк
             } else if (currentRating.getRating() == 1) {
                 currentRating.setRating(-1);
                 currentRating = ratingRepository.save(currentRating);
                 event.setRating(event.getRating() - 2);
                 initiator.setRating(initiator.getRating() - 2);
+                eventRepository.save(event);
+                userRepository.save(initiator);
                 log.info("-- Существующий лайк удалён, новый дизлайк добавлен");
-                return RatingMapper.ratingToDto(currentRating);
             }
+
+            return RatingMapper.ratingToDto(currentRating);
         }
 
         // если пользователь ещё не оценивал событие
@@ -154,6 +169,8 @@ public class RatingService {
         newRating = ratingRepository.save(newRating);
         event.setRating(event.getRating() - 1);
         initiator.setRating(initiator.getRating() - 1);
+        eventRepository.save(event);
+        userRepository.save(initiator);
 
         log.info("-- Новый дизлайк добавлен");
 
