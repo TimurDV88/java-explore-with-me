@@ -35,7 +35,6 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-
     private final PartRequestRepository partRequestRepository;
 
     @Transactional
@@ -43,68 +42,7 @@ public class RatingService {
 
         log.info("-- Добавление лайка от пользователя id={} событию id={}", userId, eventId);
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() ->
-                new NotFoundException("- Событие с id=" + eventId + " не найдено"));
-
-        User initiator = event.getInitiator();
-
-        Optional<ParticipationRequest> partRequest = partRequestRepository.findByEventAndRequester(eventId, userId);
-
-        //блок проверок
-        if (partRequest.isEmpty()) {
-            throw new IncorrectRequestException("- Запрос пользователя на участие в событии отсутствует");
-        }
-        if (!partRequest.get().getStatus().equals(PartRequestState.CONFIRMED.toString())) {
-            throw new IncorrectRequestException("- Запрос пользователя на участие в событии не подтвержден");
-        }
-        //конец блока проверок
-
-        Optional<Rating> currentRatingOptional = ratingRepository.findByEventIdAndUserId(eventId, userId);
-
-
-        // если пользователь уже оценивал событие
-        if (currentRatingOptional.isPresent()) {
-
-            Rating currentRating = currentRatingOptional.get();
-
-            // если лайк от этого пользователя уже был, то повторное проставление убирает текущий лайк
-            if (currentRating.getRating() == 1) {
-                ratingRepository.deleteById(currentRating.getId());
-                currentRating.setRating(0);
-                event.setRating(event.getRating() - 1);
-                initiator.setRating(initiator.getRating() - 1);
-                eventRepository.save(event);
-                userRepository.save(initiator);
-                log.info("-- Существующий лайк удалён при повторном добавлении лайка событию");
-
-                // если дизлайк от этого пользователя уже был, то проставление лайка убирает текущий дизлайк
-            } else if (currentRating.getRating() == -1) {
-                currentRating.setRating(1);
-                currentRating = ratingRepository.save(currentRating);
-                event.setRating(event.getRating() + 2);
-                initiator.setRating(initiator.getRating() + 2);
-                eventRepository.save(event);
-                userRepository.save(initiator);
-                log.info("-- Существующий дизлайк удалён, новый лайк добавлен");
-            }
-
-            return RatingMapper.ratingToDto(currentRating);
-        }
-
-        // если пользователь ещё не оценивал событие
-        Rating newRating = new Rating();
-        newRating.setEventId(eventId);
-        newRating.setUserId(userId);
-        newRating.setRating(1);
-        newRating = ratingRepository.save(newRating);
-        event.setRating(event.getRating() + 1);
-        initiator.setRating(initiator.getRating() + 1);
-        eventRepository.save(event);
-        userRepository.save(initiator);
-
-        log.info("-- Новый лайк добавлен");
-
-        return RatingMapper.ratingToDto(newRating);
+        return setRating(eventId, userId, 1);
     }
 
     @Transactional
@@ -112,18 +50,22 @@ public class RatingService {
 
         log.info("-- Добавление дизлайка от пользователя id={} событию id={}", userId, eventId);
 
+        return setRating(eventId, userId, -1);
+    }
+
+    private RatingDto setRating(Long eventId, Long userId, Integer inputRating) {
+
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("- Событие с id=" + eventId + " не найдено"));
 
         User initiator = event.getInitiator();
 
-        Optional<ParticipationRequest> partRequest = partRequestRepository.findByEventAndRequester(eventId, userId);
-
         //блок проверок
-        if (partRequest.isEmpty()) {
-            throw new IncorrectRequestException("- Запрос пользователя на участие в событии отсутствует");
-        }
-        if (!partRequest.get().getStatus().equals(PartRequestState.CONFIRMED.toString())) {
+        ParticipationRequest partRequest = partRequestRepository.findByEventAndRequester(eventId, userId)
+                .orElseThrow(() ->
+                        new IncorrectRequestException("- Запрос пользователя на участие в событии отсутствует"));
+
+        if (!partRequest.getStatus().equals(PartRequestState.CONFIRMED.toString())) {
             throw new IncorrectRequestException("- Запрос пользователя на участие в событии не подтвержден");
         }
         //конец блока проверок
@@ -135,25 +77,26 @@ public class RatingService {
 
             Rating currentRating = currentRatingOptional.get();
 
-            // если дизлайк от этого пользователя уже был, то повторное проставление убирает текущий дизлайк
-            if (currentRating.getRating() == -1) {
+            // если аналогичная оценка от этого пользователя уже была, то повторное проставление убирает текущую оценку
+            if (currentRating.getRating().equals(inputRating)) {
                 ratingRepository.deleteById(currentRating.getId());
                 currentRating.setRating(0);
-                event.setRating(event.getRating() + 1);
-                initiator.setRating(initiator.getRating() + 1);
+                event.setRating(event.getRating() + inputRating * -1);
+                initiator.setRating(initiator.getRating() + inputRating * -1);
                 eventRepository.save(event);
                 userRepository.save(initiator);
-                log.info("-- Существующий дизлайк удалён при повторном добавлении дизлайка событию");
+                log.info("-- Существующая оценка удалёна при повторном добавлении оценки событию");
 
-                // если лайк от этого пользователя уже был, то проставление дизлайка убирает текущий лайк
-            } else if (currentRating.getRating() == 1) {
-                currentRating.setRating(-1);
+                // если от этого пользователя уже была противоположная оценка,
+                // то меняем её на новую
+            } else if (currentRating.getRating().equals(-1 * inputRating)) {
+                currentRating.setRating(inputRating);
                 currentRating = ratingRepository.save(currentRating);
-                event.setRating(event.getRating() - 2);
-                initiator.setRating(initiator.getRating() - 2);
+                event.setRating(event.getRating() + inputRating * 2);
+                initiator.setRating(initiator.getRating() + inputRating * 2);
                 eventRepository.save(event);
                 userRepository.save(initiator);
-                log.info("-- Существующий лайк удалён, новый дизлайк добавлен");
+                log.info("-- Существующая оценка удалёна, новая оценка добавлена: {}", inputRating);
             }
 
             return RatingMapper.ratingToDto(currentRating);
@@ -163,14 +106,14 @@ public class RatingService {
         Rating newRating = new Rating();
         newRating.setEventId(eventId);
         newRating.setUserId(userId);
-        newRating.setRating(-1);
+        newRating.setRating(inputRating);
         newRating = ratingRepository.save(newRating);
-        event.setRating(event.getRating() - 1);
-        initiator.setRating(initiator.getRating() - 1);
+        event.setRating(event.getRating() + inputRating);
+        initiator.setRating(initiator.getRating() + inputRating);
         eventRepository.save(event);
         userRepository.save(initiator);
 
-        log.info("-- Новый дизлайк добавлен");
+        log.info("-- Новая оценка добавлена: {}", inputRating);
 
         return RatingMapper.ratingToDto(newRating);
     }
