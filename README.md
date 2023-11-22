@@ -1,4 +1,4 @@
-![](https://github.com/TimurDavletgareev/java-explore-with-me/commit/9f75acddffa7ad4d8a1126cbf1c8f3e688151f98)
+![](https://github.com/TimurDavletgareev/java-explore-with-me/blob/main/Image.png?raw=true)
 
 # ExploreWithMe
 
