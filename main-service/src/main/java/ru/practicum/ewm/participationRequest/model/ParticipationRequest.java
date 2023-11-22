@@ -1,4 +1,4 @@
-package ru.practicum.ewm.ParticipationRequest.model;
+package ru.practicum.ewm.participationRequest.model;
 
 import lombok.Getter;
 import lombok.Setter;

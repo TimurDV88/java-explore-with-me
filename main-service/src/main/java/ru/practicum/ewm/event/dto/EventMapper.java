@@ -61,7 +61,8 @@ public class EventMapper {
                 event.getRequestModeration(),
                 EventState.valueOf(event.getState()),
                 event.getTitle(),
-                event.getViews()
+                event.getViews(),
+                event.getRating()
         );
     }
 
@@ -87,7 +88,8 @@ public class EventMapper {
                 UserMapper.userToShortDto(event.getInitiator()),
                 event.getPaid(),
                 event.getTitle(),
-                event.getViews()
+                event.getViews(),
+                event.getRating()
         );
     }
 

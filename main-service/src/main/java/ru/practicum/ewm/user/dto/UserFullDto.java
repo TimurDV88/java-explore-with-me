@@ -11,6 +11,8 @@ public class UserFullDto implements Comparable<UserFullDto> {
 
     private final String email;
 
+    private final Integer rating;
+
     @Override
     public int compareTo(UserFullDto o) {
         return Long.compare(this.id, o.id);

@@ -7,11 +7,9 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.service.CategoryAdminService;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/categories")

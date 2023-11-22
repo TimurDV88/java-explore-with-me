@@ -1,7 +1,7 @@
-package ru.practicum.ewm.ParticipationRequest.dto;
+package ru.practicum.ewm.participationRequest.dto;
 
-import ru.practicum.ewm.ParticipationRequest.model.PartRequestState;
-import ru.practicum.ewm.ParticipationRequest.model.ParticipationRequest;
+import ru.practicum.ewm.participationRequest.model.PartRequestState;
+import ru.practicum.ewm.participationRequest.model.ParticipationRequest;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,15 +1,13 @@
-package ru.practicum.ewm.ParticipationRequest.controller;
+package ru.practicum.ewm.participationRequest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.ParticipationRequest.dto.PartRequestDto;
-import ru.practicum.ewm.ParticipationRequest.service.PartRequestService;
+import ru.practicum.ewm.participationRequest.dto.PartRequestDto;
+import ru.practicum.ewm.participationRequest.service.PartRequestService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/requests")

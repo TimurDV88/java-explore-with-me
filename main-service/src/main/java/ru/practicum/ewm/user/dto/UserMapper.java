@@ -19,7 +19,7 @@ public class UserMapper {
 
     public static UserFullDto userToFullDto(User user) {
 
-        return new UserFullDto(user.getId(), user.getName(), user.getEmail());
+        return new UserFullDto(user.getId(), user.getName(), user.getEmail(), user.getRating());
     }
 
     public static List<UserFullDto> userToFullDto(Iterable<User> users) {
@@ -37,6 +37,16 @@ public class UserMapper {
 
     public static UserShortDto userToShortDto(User user) {
 
-        return new UserShortDto(user.getId(), user.getName());
+        return new UserShortDto(user.getId(), user.getName(), user.getRating());
+    }
+
+    public static List<UserShortDto> userToShortDto(Iterable<User> users) {
+
+        List<UserShortDto> userShortDtoList = new ArrayList<>();
+
+        for (User user : users) {
+            userShortDtoList.add(userToShortDto(user));
+        }
+        return userShortDtoList;
     }
 }

@@ -39,6 +39,8 @@ public class UserAdminService {
 
         User user = UserMapper.newUserDtoToUser(newUserDto);
 
+        user.setRating(0);
+
         UserFullDto fullUserDtoToReturn = UserMapper.userToFullDto(userRepository.save(user));
 
         log.info("-- Пользователь сохранён: {}", fullUserDtoToReturn);
